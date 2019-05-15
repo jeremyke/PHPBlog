@@ -21,12 +21,12 @@ class RpcClient {
         }
         //传递调用的类名
         $class = basename($this->urlInfo['path']);
-        $proto = "Rpc-Class: {$class};" . PHP_EOL;
+        $proto = "RPC-Class: {$class};" . PHP_EOL;
         //传递调用的方法名
-        $proto .= "Rpc-Method: {$method};" . PHP_EOL;
+        $proto .= "RPC-Method: {$method};" . PHP_EOL;
         //传递方法的参数
         $params = json_encode($params);
-        $proto .= "Rpc-Params: {$params};" . PHP_EOL;
+        $proto .= "RPC-Params: {$params};" . PHP_EOL;
         //向服务端发送我们自定义的协议数据
         fwrite($client, $proto);
         //读取服务端传来的数据
