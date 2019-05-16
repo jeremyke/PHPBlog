@@ -1,4 +1,4 @@
- ## 1. container容器介绍
+ ## 1. Docker实践
  container 是建立在image层之上“只读”
  
  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1739022581121130.png)
@@ -56,4 +56,24 @@
    不会被忽略，一定会执行；<br/>
    可以写一个shell脚本作为enterpoint:例如：ENTERPOINT ['hello.sh']
         
-  ```
+  
+  **镜像发布：**
+  >这里发布到docker hub忽略不说，重点说下实践工作中发布到远程服务器的例子。
+   - 第一步：
+   
+   在目标服务器运行一个container,(docker run -d -p 5000:5000 --restart always --name registory registory:2)
+
+   - 第二步：
+   
+   本地代码push到远程容器（build镜像的时候：docker build -t 192.168.12.45:5000/helloworld .） 
+   ```
+   注意：为了说明本地环境push代码是安全的的，需要做以下事情：
+   （1）ls /etc/docker 创建daemon.json文件 内容是：{"insecure-registeries":["192.168.12.45:5000"]}
+   （2）vim /lib/systemed/system/docker.service 加一行
+   在ExecStart=/usr/bin/docker下面加入：EnvironmentFile=-/etc/docker/daemon.json
+   （3）service docker restart
+   ```  
+   - 第三步：
+   
+   docker push 192.168.12.45:5000/helloworld
+   
