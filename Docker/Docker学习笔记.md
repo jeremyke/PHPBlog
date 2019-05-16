@@ -1,6 +1,6 @@
  ## 1. container容器介绍
  container 是建立在image层之上“只读”
- ![image](./360截图1739022581121130.png)
+ ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1739022581121130.png)
 
  **Docker镜像和容器常用命令：** 
  - docker image ls
