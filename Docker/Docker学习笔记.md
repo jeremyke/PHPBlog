@@ -77,3 +77,12 @@
    
    docker push 192.168.12.45:5000/helloworld
    
+   **容器的操作**
+   ```
+   Docker run -it [镜像名称] /bin/bash 交互式的运行某个镜像并且进入镜像里面
+   Docker run -d [镜像名称] 在后台执行某个container
+   ```
+   - docker exec -it [containerID] /bin/bash（还可以运行其他命令） 
+   >进入一个运行中的container里面
+   
+   - docker inspect [containerID] 显示docker详细信息
