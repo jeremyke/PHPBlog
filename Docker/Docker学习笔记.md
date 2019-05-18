@@ -86,3 +86,25 @@
    >进入一个运行中的container里面
    
    - docker inspect [containerID] 显示docker详细信息
+   
+   
+  ## 2.Docker网络
+  ```
+          |-bridge network
+      单机-|-host network
+          |-none network 
+          
+      多机-overlay network
+  ```
+  
+  #### 2.1 网络基础
+  
+  > 介绍一个网络抓包工具：wireshark
+  
+   - 网络的2种模型
+   
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17480126494239.png)
+   
+   - NAT
+   
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16780630345924.png)
