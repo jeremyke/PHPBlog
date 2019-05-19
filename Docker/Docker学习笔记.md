@@ -134,3 +134,36 @@
   第九步：查看2个netns的ip地址：sudo ip netns test1 ip a
   第十步：在其中一个netns中ping另外一个netns的ip发现是通的：sudo ip netns exec test1 ping 192.168.1.2
   ```
+  
+  #### 2.3 Docker Bridge
+  >查看docker网络:docker network ls
+  
+  **一张图弄清楚2个container如何通信和单个container如何访问外网**
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17731208708661.png)
+    
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1700101689119104.png)
+  
+  #### 2.3 Docker间的通信
+  
+   - 先创建一个容器
+   
+ sudo docker run -d --name test1busybox /bin/sh -c "while true;do sleep 3600;done"
+  - 再创建另一个容器 link 之前那个容器，这样2个容器就连接起来的，test2可以直接ping test1这个容器名字
+ 
+ sudo docker run -d --name test2 --link test1 busybox /bin/sh -c "while true;do sleep 3600;done"
+ 
+ >创建一个container会默认连接到bridge这个容器，其实可以连接到已有或者自己新建的network
+ 
+ 实验步骤：
+ ```
+ 第一步：创建自己的network:sudo docker network create -d bridge my-bridge
+ 第二步：新创建一个container连接到这个my-bridge：sudo docker run -d --name test3 -- network my-bridge busybox /bin/sh -c 
+ "while true;do sleep 3600;done"
+ ```
+  - 默认的bridge和自定义的bridge区别：
+  ```
+  2个容器连接到默认的bridge，2者可以通过ping ip连接无法通过ping 名称连接，只有link了之后才可以单向的ping 名字；
+  但是如果2个容器都连接到自定义的bridge之后，相互之间可以通过ping 名称连接。
+  ```
+  
