@@ -108,3 +108,29 @@
    - NAT
    
    ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16780630345924.png)
+   
+   
+  #### 2.2 Linux网络命名空间
+  
+  示意图
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/173606258412577.png)
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18141217427864.png)
+  
+  > 每个容器的network namespace都是相互隔离开的，和宿主主机也是隔离开的。
+  
+  **实验演示**
+  ```
+  第一步：在宿主主机上创建2个netns:sudo ip netns add test1；sudo ip netns add test2；通过命令sudo ip netns list查看netns
+  第二步：查看2个netns的ip地址 sudo ip netns exec test1 ip a 
+  第三步：查看2个netns的ip link sudo ip netns exec test1 ip link
+  第四步：将test1的ip 状态up起来：sudo ip netns exec test1 ip link set dev lo up(状态变为unknow,因为一个端口是否起来
+  需要连接另一个进行测试，单个端口状态是unknow的)
+  第五步：在宿主主机添加一对ip link：sudo ip link add veth-test1 type veth peer name  veth-test2
+  第六步：把veth-test1和veth-test2 分别添加到netns test1和test2：sudo ip link set veth-test1 netns test1
+  第七步：给2个netns配置ip地址：sudo ip netns exec test1 ip addr add 192.168.1.1/24 dev veth-test1
+  第八步：将2个netns Up  起来：sudo ip netns exec test1 ip link set dev veth-test1[2] up
+  第九步：查看2个netns的ip地址：sudo ip netns test1 ip a
+  第十步：在其中一个netns中ping另外一个netns的ip发现是通的：sudo ip netns exec test1 ping 192.168.1.2
+  ```
