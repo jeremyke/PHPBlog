@@ -167,3 +167,12 @@
   但是如果2个容器都连接到自定义的bridge之后，相互之间可以通过ping 名称连接。
   ```
   
+  #### 2.3 Docker 端口映射
+  
+  **网路图**
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190520172031.png)
+  
+  **命令**
+  
+  docker run --name web -d -p 8000(宿主机的端口):8000(容器的端口) nginx
