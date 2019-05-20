@@ -176,3 +176,20 @@
   **命令**
   
   docker run --name web -d -p 8000(宿主机的端口):8000(容器的端口) nginx
+  
+ #### 2.4 Docker 网络之host和none
+ 
+ docker网络有3种：
+ 
+ ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/167510217510269.png)
+ 
+ >创建容器的时候指定连接的network:<br/>
+ docker run -d -name test1 --network none[host] busybox /bin/sh -c "while true;do sleep 3600;done"<br/>
+ 说明：连接到none的容器，没有IP地址，是个孤立的，外部无法访问；连接到host的容器，和宿主主机公用一套network，
+ 这个时候需要主要端口冲突。
+ 
+  #### 2.5 多机通信overlay && underlay
+  >看图：
+  
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/180908117510798.png)
+  
