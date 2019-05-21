@@ -192,4 +192,50 @@
   >看图：
   
    ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/180908117510798.png)
+   
+   
+ ## 3. Docker持久化存储和数据共享
+ 
+ docker volume图解：
+ 
+ ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17290503160940.png)
+ 
+ Docker持久化方案：
+ 
+ ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16751028362736.png)
+ 
+ >volume类型：<br/>
+ (1)受管理的data volume,由docker后台自动创建<br/>
+ (2)绑定挂载的volume，挂载位置由用户指定.
+ 
+ 
+ #### 3.1 持久化方案一.data volume
+ 
+  - Dockerfile指定路径
+  
+  VOLUME["/var/lib/mysql"]
+ 
+  - 命名
+  
+  docker run -d -v mysql:/var/lib/mysql(说明：volume名称:volume在宿主机的地址) --name mysql1 MYSQL_ALLOW_EMPTY_PASSWORD
+ =true mysql
+ 
+  - 特点
+  
+  container被删除之后，该volume不会被删除，下一次创建container如果仍然指定这个volume，可以继续使用，而且原来的数据仍然在这里.
+  
+  #### 3.2 持久化方案二.Bind Mouting
+  
+  **提示：**用这个方法将本地的项目文件映射到container里面去，对于本地使用docker开发简直牛逼的不行!
+  
+  >无需再DockerFile里面指定volume地址，只需在构建容器的时候通过-v参数指定宿主机路径和容器路径相映射
+  
+  - 命令
+  
+  docker run -d -v $(pwd):usr/share/nginx/html -p 80:80 --name mysql1 MYSQL_ALLOW_EMPTY_PASSWORD
+   =true mysql
+   
+  - 特点
+  
+  在宿主机或者容器相应的位置修改文件，在对方目录都会同步，其实就是同一个目录.
   
