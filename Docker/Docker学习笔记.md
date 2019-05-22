@@ -239,3 +239,23 @@
   
   在宿主机或者容器相应的位置修改文件，在对方目录都会同步，其实就是同一个目录.
   
+  sudo docker run --name nginx -p 8080:443 -v $(pwd):/var/www/html -d boxedcode/alpine-nginx-php-fpm
+  
+  
+   ## 4. Docker composer
+   
+   #### 4.1 搭建一个WordPress 应用
+   
+   ```
+   第一步：构建mysql容器<br/>
+   docker run -d --name mysql -v mysql-data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=wordpress mysql<br/>
+   第二步：构建WordPress容器<br/>
+   docker run -d -e WORDPRESS_DB_HOST=mysql:3306 --link mysql -p 8080:80 wordpress<br/>
+   [注意有坑]：<br/>
+   由于使用的是最新版的mysql 8.x 导致数据库连不上，需要做如下处理：
+   docker exec -it mysql bash<br/>
+   mysql -u root -pPASSWORD<br/>
+   ALTER USER root IDENTIFIED WITH mysql_native_password BY 'PASSWORD';<br/>
+
+   ```
+  
