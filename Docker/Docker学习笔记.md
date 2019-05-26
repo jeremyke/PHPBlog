@@ -322,3 +322,56 @@
   ```
   >通过docker-compose up --scale web=n -d来实现
   
+  
+  ## 5. Docker swarm
+   - 如下是swarm的基础架构
+   
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16720405075654.png)
+   
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/168004099093133.png)
+   
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/181412228610880.png)
+   
+  #### 5.1 创建swarm cluster
+  ```
+  第一步：创建3个host(1个manger2个worker,具体vagrantfile在实验源码里面给出了)
+  第二步：进入到manager host里面去创建一个manager节点:
+        vagrant ssh swarm-manager
+        docker swarm init --advertise-addr=(这个host的ip地址)
+  第三步：往这个manager节点里面添加worker节点，分别进入2个worker host里面
+         docker swarm join --token SWMTKN-1-5cxl75fcu5tniq3t38z15wmlv312be57evf863vij9taw4ezlk-ac5o9bprnow6mod4zfttj6b4w 192.168.205.10:2377
+  第四步：查看创建好的节点：
+          进入到docker-manager ：docker node ls      
+  
+  ```
+  #### 5.1 docker service 扩展
+  
+  **实验步骤**
+  
+   - 第一步：创建一个service（在manager上）
+   >docker service create --name demo busybox sh -c "while true;do sleep 3600;done"
+   - 第二步：查看service 列表
+   >docker service ls(可以查看每个service所在的node)
+   - 第三步：查看service 详情
+   >docker service ps [service名称]（可以看到service所在的node）
+   
+   - 第三步：对这个demo的service扩展
+   >docker service scale [扩展的service name]=[扩展的个数]
+   
+   -第四步：删除某个service的所有扩展
+   >docker service rm [service名称]
+   
+   **特点**
+   >如果某个节点的扩展意外退出了工作，service会马上扩展出一个新的扩展，任意部署在某个节点是，保证service安全可用。
+   
+   #### 5.1 docker swarm搭建一个wordpress
+   
+   **实验步骤**
+   - 创建一个overlay的network（连接在overlay的容器，不管他是否在同一台主机，都能相互通信）
+   >docker network create -d overlay demo
+   
+   - 创建mysql的service
+   >docker service create --name mysql --env MYSQL_ROOT_PASSWORD=root --env MYSQL_DATABASE=wordpress --network demo --mount type=volume,source=mysql-data,destination=/var/lib/mysql mysql
+   
+   - 创建WordPress的service
+   >docker service create --name wordpress -p 80:80 --env WORDPRESS_DB_PASSWORD=root --env WORDPRESS_DB_HOST=mysql --network demo wordpress
