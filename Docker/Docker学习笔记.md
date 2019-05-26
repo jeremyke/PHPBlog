@@ -320,5 +320,5 @@
         - /var/run/docker.sock:/var/run/docker.sock 
   
   ```
-  >通过docker-compose up web=n -d来实现
+  >通过docker-compose up --scale web=n -d来实现
   
