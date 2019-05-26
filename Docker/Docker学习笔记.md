@@ -258,4 +258,67 @@
    ALTER USER root IDENTIFIED WITH mysql_native_password BY 'PASSWORD';<br/>
 
    ```
+   #### 4.1 什么是Docker composer
+   >docker composer是一个根据yml文件管理多个容器的命令行工具
+  
+  **yml文件**
+  ```
+  默认名称是：docker-composer.yml
+  三部分：
+  （1）service:一个service代表一个container，这个container可以从dockerhub的image来创建，或者从本地dockerfile build的出来的image来创建。
+       可以设置volumes和networks
+   (2)volumes
+   (3)networks
+
+  ```
+  
+  如图案例：
+  
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/docker-composer.png)
+   
+  **docker-compose安装**
+  ```
+  第一步：下载文件： curl -L https://github.com/docker/compose/releases/download/1.23.0-rc3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  第二步：修改权限：chmod +x /usr/local/bin/docker-compose
+
+  ```
+  **docker-compose常用命令**
+  ```
+  docker-compose (-f filename.yml指定的yml文件)up ：启动一个compose组
+  docker-compose stop(down停止并且删除)只是停止
+  docker-compose start 启动compose组
+  docker-compose ps 查看service情况
+  docker-compose image 查看镜像
+  docker-compose exec service名 bash 进入某一个service容器
+
+  ```
+  **负载均衡的实现**
+  >安装ockercloud/haproxy
+  
+  ```ssh
+  version: "3"
+  
+  services:
+  
+    redis:
+      image: redis
+  
+    web:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      environment:
+        REDIS_HOST: redis
+  
+    lb:
+      image: dockercloud/haproxy
+      links:
+        - web
+      ports:
+        - 8080:80
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock 
+  
+  ```
+  >通过docker-compose up web=n -d来实现
   
