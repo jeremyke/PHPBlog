@@ -344,7 +344,7 @@
           进入到docker-manager ：docker node ls      
   
   ```
-  #### 5.1 docker service 扩展
+  #### 5.2 docker service 扩展
   
   **实验步骤**
   
@@ -364,7 +364,7 @@
    **特点**
    >如果某个节点的扩展意外退出了工作，service会马上扩展出一个新的扩展，任意部署在某个节点是，保证service安全可用。
    
-   #### 5.1 docker swarm搭建一个wordpress
+   #### 5.3 docker swarm搭建一个wordpress
    
    **实验步骤**
    - 创建一个overlay的network（连接在overlay的容器，不管他是否在同一台主机，都能相互通信）
@@ -375,3 +375,36 @@
    
    - 创建WordPress的service
    >docker service create --name wordpress -p 80:80 --env WORDPRESS_DB_PASSWORD=root --env WORDPRESS_DB_HOST=mysql --network demo wordpress
+   
+   #### 5.4 docker service之间的通信
+   
+   **图示**
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18140130434394.png)
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16570130120141141.png)
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18750813423462.png)
+   
+   **实验步骤**
+   - 第一步：创建一个swarm manager和2个worker
+   >docker swarm init --advertise-addr=192.168.0.38
+   >docker swarm join --token SWMTKN-1-13lnohv30phdx311u9f1vustsd7thtgiyq0ti04k1kq9tjn6h8-727rolmzmxv58l37y4ixjft9j 192.168.0.38:2377
+   
+   - 第二步：创建一个demo 的 overlay network
+   >docker network create -d overlay demo
+   
+   - 第三步：创建一个whoami的service和一个busybox的service
+   >docker service create --name whoami -p 8000:8000 --network demo -d jwilder/whoami
+   >docker service create --name client -d --network demo busybox sh -c "while true;do sleep 3600;done;"
+  
+   - 第四步：进busybox的container里面ping whoami
+   >docker exec -it sdfs sh
+   >ping whoami
+   >这个时候出现的ip为10.0.0.7
+   
+   -第五步：通过nsloopup task.whoami 查询这个集群whoami真正对应的ip
+   >nsloopup task.whoami
+   
+   - 说明：
+   >swarm集群会为每个service开辟一个唯一的虚拟ip(vip)，集群中的container通过这个ip找到对应的service，然后task.whoami找到这个service的容器真正对应的ip,
+   并且具有负载均衡的特征
+   
+      
