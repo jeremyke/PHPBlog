@@ -379,11 +379,15 @@
    #### 5.4 docker service之间的通信
    
    **图示**
+   
    ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18140130434394.png)
+   
    ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16570130120141141.png)
+   
    ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18750813423462.png)
    
    **实验步骤**
+   
    - 第一步：创建一个swarm manager和2个worker
    >docker swarm init --advertise-addr=192.168.0.38
    >docker swarm join --token SWMTKN-1-13lnohv30phdx311u9f1vustsd7thtgiyq0ti04k1kq9tjn6h8-727rolmzmxv58l37y4ixjft9j 192.168.0.38:2377
@@ -405,6 +409,60 @@
    
    - 说明：
    >swarm集群会为每个service开辟一个唯一的虚拟ip(vip)，集群中的container通过这个ip找到对应的service，然后task.whoami找到这个service的容器真正对应的ip,
-   并且具有负载均衡的特征
+   并且具有负载均衡的特征<br/>
+   >ingress
    
-      
+   #### 5.5 Docker stacks部署wordpress
+   >docker compose 可以很方便的在本地单机搭建应用，但是如果是一个cluster，要想使用docker compose该怎么办呢？Docker stacks应运而生了
+   
+   **实验步骤**
+   - 第一步：创建一个swarm manager和2个worker
+   >docker swarm init --advertise-addr=192.168.0.38
+   >docker swarm join --token SWMTKN-1-13lnohv30phdx311u9f1vustsd7thtgiyq0ti04k1kq9tjn6h8-727rolmzmxv58l37y4ixjft9j 192.168.0.38:2377
+   
+   - 第二步：创建一个Docker stacks
+   >docker stacks deploy wordpress --compose-file=docker-compose.yml
+   >docker stacks ls(查看stacks列表)
+   >docker stacks ps wordpress（stack（每个容器）具体细节详情）
+   >docker stacks service ps wordpress（stack（每个service）具体细节详情）
+   
+   - 第三步：访问wordpress
+   >浏览器直接输入ip就可以访问了
+   
+   - 第四步：删除wordpress的stacks
+   >docker stacks rm wordpress
+   
+   #### 5.5 Docker secret的使用
+   >在前面我们可以看到docker-compose文件里面的数据库密码什么的都是明文，极其不安全，为了安全，需要有一个密码管理工具docker secret.
+   
+   **图示**
+   >secret 存放于Raft database里面
+   
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606150952.png)
+   
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606151211.png)
+   
+   **实验步骤**
+   
+   - 第一步：创建一个docker secret
+   >docker secret create [secret名称] [密码文件]，比如：docker secret create my-pw password(通过密码文件去创建secret)<br/>
+   >echo "[密码明文]" | docker secret create [secret名称] -，比如：echo "adminadmin" | docker secret create my-pw2 -(通过命令行去创建secret)<br/>
+   
+   - 第二步：删除密码文件（这个时候这个密码文件已经保存在raft database里面了，而且是加密的）
+   >rm -rf password
+   
+   - 第三步：查看docker secret 列表
+   >docker secret ls
+   
+   - 第四步：创建一个service 指定secret,就可以在这个service的container里面访问这个secret
+   >docker service create --name client  --secret my-pw2 busybox sh -c "while true;do sleep 3600;done"（创建成功）
+   >docker exec -it client sh cat /run/secret/my-pw2（查看secret）
+   
+   - 第五步：创建一个service 指定secret,并且应用这个secret
+   >docker service create --name db  --secret my-pw -e MYSQL_ROOT_PASSWORD_FILE=/run/secret/my-pw mysql
+   
+   **service更新**
+   >docker service update --publish-rm 8080:5000 --publish-add 8088:5000 --image xx:v2 web(更新端口（会中断业务）和镜像（平滑更新）)
+   
+   **stack更新**
+   >docker stacks deploy wordpress --compose-file=docker-compose.yml(如果yml文件出现了更新，整个stack就会更新，不用删除之前的stack)       
