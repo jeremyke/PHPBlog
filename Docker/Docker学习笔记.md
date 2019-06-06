@@ -432,7 +432,7 @@
    - 第四步：删除wordpress的stacks
    >docker stacks rm wordpress
    
-   #### 5.5 Docker secret的使用
+   #### 5.6 Docker secret的使用
    >在前面我们可以看到docker-compose文件里面的数据库密码什么的都是明文，极其不安全，为了安全，需要有一个密码管理工具docker secret.
    
    **图示**
@@ -465,4 +465,15 @@
    >docker service update --publish-rm 8080:5000 --publish-add 8088:5000 --image xx:v2 web(更新端口（会中断业务）和镜像（平滑更新）)
    
    **stack更新**
-   >docker stacks deploy wordpress --compose-file=docker-compose.yml(如果yml文件出现了更新，整个stack就会更新，不用删除之前的stack)       
+   >docker stacks deploy wordpress --compose-file=docker-compose.yml(如果yml文件出现了更新，整个stack就会更新，不用删除之前的stack)
+    
+  ## 5. Docker Cloud和Docker Enterprise
+  
+  #### 5.1 docker cloud
+  >iaas(基础设施服务，比如：阿里云，aws...)-->pass(平台服务,比如：mysql，php)-->saas(软件服务，比如：QQ，微信...)<br />
+  >caas(提供容器的管理，编排，部署的托管服务 container as a service)
+  >caas主要模块：关联云服务商（aws,aliyun）,添加节点作为docker host,创建服务service,创建stack,image管理
+  
+  开发流程图示：
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606173440.png)      
