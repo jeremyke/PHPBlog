@@ -467,13 +467,30 @@
    **stack更新**
    >docker stacks deploy wordpress --compose-file=docker-compose.yml(如果yml文件出现了更新，整个stack就会更新，不用删除之前的stack)
     
-  ## 5. Docker Cloud和Docker Enterprise
+  ## 6 Docker Cloud和Docker Enterprise
   
-  #### 5.1 docker cloud
+  #### 6.1 docker cloud
   >iaas(基础设施服务，比如：阿里云，aws...)-->pass(平台服务,比如：mysql，php)-->saas(软件服务，比如：QQ，微信...)<br />
   >caas(提供容器的管理，编排，部署的托管服务 container as a service)
   >caas主要模块：关联云服务商（aws,aliyun）,添加节点作为docker host,创建服务service,创建stack,image管理
   
   开发流程图示：
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606173440.png)      
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606173440.png)    
+  
+  
+  ## 7 kubenetes
+  
+  #### 7.1 的架构图
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/178912286910262.png)
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17290505408554.png)
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17610617104055.png)
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17860601183669.png)
+  
+  **简单说明**
+  
+  >
