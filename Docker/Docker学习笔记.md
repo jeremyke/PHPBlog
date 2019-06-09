@@ -493,4 +493,14 @@
   
   **简单说明**
   
-  >
+  >kubenetes有2种节点，master（管理）和node（工作）。<br/>
+  >master节点：<br/>
+  >     api server 暴露给外面应用（cli或者ui）访问的;scheduler是一个调度模块，通过调用算法决定容器运行在哪个节点上；controller<br/>
+  >     控制容器scale稳定运行；etcd是个分布式的配置存储；<br/>
+  >nodeJie节点：<br/>
+  >     pod是k8s在容器里面调度的最小单位，它是具有相同的namespace（user namespace和network namespace...）的container组合<br/>
+  >     docker是容器技术；node节点是受master节点控制的，master是通过kubelet对node节点上容器的创建，配置，编排等管理；kube-proxy是<br/>
+  >     和网络有关，帮助service做网络的代理和转发，服务发现，负载均衡；fluentd做日志的采集和存储。
+  
+  #### 7.2 minikube搭建k8s单节点环境
+  
