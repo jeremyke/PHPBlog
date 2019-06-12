@@ -502,5 +502,18 @@
   >     docker是容器技术；node节点是受master节点控制的，master是通过kubelet对node节点上容器的创建，配置，编排等管理；kube-proxy是<br/>
   >     和网络有关，帮助service做网络的代理和转发，服务发现，负载均衡；fluentd做日志的采集和存储。
   
+  **搭建k8s的方法**
+  >kubeadm本地搭建多节点集群；minikube本地快速搭建单节点集群；kops云上搭建k8s集群；play-with-k8s自己玩一下k8s
+  
   #### 7.2 minikube搭建k8s单节点环境
+  
+  - 第一步 安装minikube和kubectl
+  
+  - 第二步 启动minikube: minikube start
+  
+  - 第三步 查看当前cluster的详细详细：kubectl config view
+  
+  - 第四步 查看当前使用的minikube-contexts：kubectl config get-contexts
+  
+  - 第五步 查看当前cluster状态： kubectl cluster-info
   
