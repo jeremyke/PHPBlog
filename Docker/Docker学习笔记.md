@@ -517,3 +517,5 @@
   
   - 第五步 查看当前cluster状态： kubectl cluster-info
   
+  - 第六步 进入minikube创建的虚拟机里面：minikube ssh
+  
