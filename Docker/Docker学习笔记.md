@@ -507,6 +507,8 @@
   
   #### 7.2 minikube搭建k8s单节点环境
   
+  **实验操作**
+  
   - 第一步 安装minikube和kubectl
   
   - 第二步 启动minikube: minikube start
@@ -518,4 +520,33 @@
   - 第五步 查看当前cluster状态： kubectl cluster-info
   
   - 第六步 进入minikube创建的虚拟机里面：minikube ssh
+  
+  **pod的操作**
+  >一个pod共享一个namespace，包括网络和存储...,一个pod可以包含多个container,是k8s操作的最小单位。
+  
+  - 创建一个pod
+  >kubectl create -f [pod的yml文件]
+  
+  - 删除一个pod
+  >kubectl delete -f [pod的yml文件]
+  
+  - 查看pod列表
+  >kubectl get pods
+  >kubectl get pods -o wide
+ 
+  - 进入到一个pod的某个容器里面
+  >kubectl exec -it [pod名称] -c [容器名称] sh
+  
+  - 查看pod的详情
+  >kubectl descript pods nginx 
+  
+  - 把pod的端口映射到外面来
+  >kubectl port-forward [pod名称] [本地端口]:[pod端口]
+  
+  - scale扩展
+  >kubectl scale rc [repliceaction名称] -- replicas=2
+  
+  
+  
+  
   
