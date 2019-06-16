@@ -504,7 +504,7 @@
   
   **搭建k8s的方法**
   >kubeadm本地搭建多节点集群；minikube本地快速搭建单节点集群；kops云上搭建k8s集群；play-with-k8s自己玩一下k8s
-  
+  k
   #### 7.2 minikube搭建k8s单节点环境
   
   **实验操作**
@@ -544,7 +544,20 @@
   >kubectl port-forward [pod名称] [本地端口]:[pod端口]
   
   - scale扩展
-  >kubectl scale rc [repliceaction名称] -- replicas=2
+  >kubectl scale rc [repliceaction名称] -- replicas=2 (kind为replicationController)
+  >kubectl scale rs [repliceaction名称] -- replicas=2 (kind为replicationSet)
+  
+  - deployment
+  >创建一个deployment：kubectl create -f [deployment的yml文件] 
+  >查看deployment：kubectl get deployment
+  >查看deployment的rs：kubectl get rs
+  >查看deployment的rs的pods：kubectl get pods
+  >查看deployment的详细：kubectl get deployments -o wide
+  >修好deployment的镜像版本：kubectl set image deployment [deployment名称] [镜像名]=[镜像名:镜像名的版本号]
+  >查看deployment的镜像升级历史：kubectl rollout history deployment [deployment名称] 
+  >回退deployment的镜像历史版本：kubectl rollout undo deployment [deployment名称]
+  >使得deployment的container的端口暴露给外部：kubectl expose deployment [deployment名称] --port=NodePort(其实是创建了一个service)
+  >查看svc：kubectl get svc(就能看到绑定的端口)
   
   
   
