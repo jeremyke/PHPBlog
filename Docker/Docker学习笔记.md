@@ -559,7 +559,52 @@
   >使得deployment的container的端口暴露给外部：kubectl expose deployment [deployment名称] --port=NodePort(其实是创建了一个service)
   >查看svc：kubectl get svc(就能看到绑定的端口)
   
+  #### 7.3 tectonic搭建k8s多节点集群
+  >安装使用vagrant+virtulBox直接安装，由于需要科学上网，我vps被封，暂无法演示。泪奔......
   
+  **cluster基础网络**
+  
+   - 图示：
+  
+   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153143.png)
+  
+   - 特点：
+   >cluster内任何container之间可以通过ip相互ping通，任何pods之间也可以相互ping通。
+   
+   
+  **service**
+  
+  - 什么是service？
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153632.png)
+  
+  - 不要直接管理pods?
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153759.png)
+  
+  - service的创建和类型
+  >可以通过kubectl expose创建，也可以通过yml文件创建。
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153925.png)
+  
+  - kubectl expose创建 clusterIP的service
+  >kubectl expose [resource] [resource name] (比如：kubectl expose pods nginx-pods或者：kubectl expose deployment service-test)
+  >service 会对内部的pods做负载均衡
+  
+  - 查看service列表
+  >kubectl get svc
+  
+  - 修改service的yml文件实现更新
+  >kubectl edit [resource] [resource name],进入yml文件，修改完成，wq报存，自动更新
+  
+  **NodePort service**
+  >创建一个pods:kubectl create -f [yml文件]
+  >创建nodepodservice：kubectl expose [resource] [resource name] --type=NodePort
+  >nodeports会将这个service的端口映射到每一个node上
+  >也可以通过yml文件的创建service:kubectl create -f [service的yml文件]
+  
+  - 将一个pod创建在指定的node上
+  >(1)设置node的Lable:kubectl lable node [node名称] [key]=[value]
+  >(2)在pod的yml文件上，指定nodeSelector:[key]=[value]
   
   
   
