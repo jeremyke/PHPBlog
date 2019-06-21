@@ -607,4 +607,78 @@
   >(2)在pod的yml文件上，指定nodeSelector:[key]=[value]
   
   
+  ## 9 CI && CD
+  
+  #### 9.1 安装gitlab
+  
+  **安装步骤**
+  
+  - 安装依赖
+  ```
+    yum install -y git vim gcc glibc-static telnet
+    yum install -y curl policycoreutils-python openssh-server
+    systemctl enable sshd
+    systemctl start sshd
+    yum install postfix
+    systemctl enable postfix
+    ln -s  /usr/lib64/mysql/libmysqlclient.so.18   /usr/lib64/
+    systemctl start postfix
+  ```
+  - 设置gitlab安装源
+  
+  ```
+  vim /etc/yum.repos.d/gitlab-ce.repo
+  文件内容：
+  [gitlab-ce]
+  name=Gitlab CE Repository
+  baseurl=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el$releasever/
+  gpgcheck=o
+  enabled=1 
+  ```
+  - 安装
+  
+  ```
+  EXTERNAL_URL="http://[你的域名]" yum install -y gitlab-ce 
+  安装完成之后：
+  gitlab-ctl reconfigure
+  ```
+  - 访问
+  ```
+  默认80端口 可以直接输入你设置的访问 
+  ```
+  #### 9.1 本地安装gitlab CI
+  
+  - 安装Docker
+  
+  ```angular2
+    curl -sSl https://get.docker.com/ | sh
+  ```
+  - 安装gitlab ci runner
+  
+  ```
+   curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh | sudo bash
+   sudo yum install gitlab-ci-multi-runner -y
+   查看是否正常运行：
+   gitlab-ci-multi-runner status
+  ``` 
+  - 设置Docker权限(将gitlab-runner用户添加到docker group里面)
+  ```
+   usermod -aG docker gitlab-runner
+   service docker restart
+   gitlab-ci-multi-runner restart
+   
+  ```
+  
+  - 把gitlab ci注册到gitlab服务器里面
+  ```
+   gitlab-ci-multi-runner register
+  ```
+  具体如图：
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17370517687694.png)
+  
+  - 把gitlab web上添加.gitlab-ci.yml。就可以实现持续集成了！
+  
+  
+  
   
