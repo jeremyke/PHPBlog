@@ -669,7 +669,7 @@
    
   ```
   
-  - 把gitlab ci注册到gitlab服务器里面
+  - 把gitlab-ci-runner 注册到gitlab服务器里面(让服务器知道有这个ci-runner)
   ```
    gitlab-ci-multi-runner register
   ```
@@ -678,6 +678,61 @@
   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17370517687694.png)
   
   - 把gitlab web上添加.gitlab-ci.yml。就可以实现持续集成了！
+  
+  #### 9.2 真实python项目的CI步骤
+  
+  **实验步骤**
+  
+  - 在gitlab web上创建一个flask-demo项目（可以通过import github的项目方式）
+  >github url为：https://github.com/imooc-course/docker-cloud-flask-demo
+  
+  - 在本地通过docker run跑起来这个flask-demo项目
+  
+  - 在gitlab-ci-runner服务器使用docker来进行CI操作（代码风格检查，语法检查...）
+  >首先解决dns问题，是的ci上的docker能够访问gitlab的域名：<br/>
+  >(1)在另一台独立主机启动dns服务：docker run -d -p 53:53/tcp -p 53:53/udp --cap-add=NET_ADMIN --name dns-server andyshinn/dnsmasq<br/>
+  >(2)配置dns服务：docker exec -it dns-server /bin/sh<br/>
+  >配置服务器地址：vi /etc/resolv.dnsmasq添加内容：nameserver 114.114.114.114 nameserver 8.8.8.8
+  >配置本地解析规则：vi /etc/dnsmasqhosts 添加gilab域名解析：192.168.101.128 gitlab.example.com
+  >修改dns服务的配置文件：vi /etc/dnsmasq.conf 内容：resolv-file=/etc/resolv.dnsmasq addn-hosts=/etc/dnsmasqhosts
+  >(3)重启dns-server:docker restart dns-server
+  >修改gitlab服务器的nameserver:vi /etc/resolv.conf nameserver [dns服务器地址]
+  
+  - 在gitlab-ci-runner服务器创建2个runners(python3.4和python2.7)
+  >gitlab-ci-multi-runner register（excutor选择docker）
+  
+  - 在gitlab-ci-runner服务器首先pull2个需要的docker镜像（这里是python2.7和python3.4）
+  >docker pull python:3.4/2.7
+  
+  - 在gitlab web上创建.gitlab-ci.yml会在pipeline上创建running，这就是整个ci过程。
+  ```yaml
+stages:
+    - style
+    - test
+pep8:
+    stage: style
+    script:
+        - pip install tox
+        - pip -e pep8
+    tags:
+        - python2.7
+unittst-py27:
+    stage: test
+    script:
+        - pip install tox
+        - tox -e py27
+    tags:
+        - python2.7
+unittst-py34:
+    stage: test
+    script:
+        - pip install tox
+        - tox -e py34
+    tags:
+        - python3.4
+ ```
+  
+  
   
   
   
