@@ -611,6 +611,8 @@
   
   #### 9.1 安装gitlab
   
+  ![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/20190606173440.png)
+  
   **安装步骤**
   
   - 安装依赖
@@ -689,7 +691,7 @@
   - 在本地通过docker run跑起来这个flask-demo项目
   
   - 在gitlab-ci-runner服务器使用docker来进行CI操作（代码风格检查，语法检查...）
-  >首先解决dns问题，是的ci上的docker能够访问gitlab的域名：<br/>
+  >首先解决dns问题，使得ci上的docker能够访问gitlab的域名：<br/>
   >(1)在另一台独立主机启动dns服务：docker run -d -p 53:53/tcp -p 53:53/udp --cap-add=NET_ADMIN --name dns-server andyshinn/dnsmasq<br/>
   >(2)配置dns服务：docker exec -it dns-server /bin/sh<br/>
   >配置服务器地址：vi /etc/resolv.dnsmasq添加内容：nameserver 114.114.114.114 nameserver 8.8.8.8
@@ -731,6 +733,139 @@ unittst-py34:
     tags:
         - python3.4
  ```
+ 
+  #### 9.3 真实python项目的CD
+  >基于上面CI流程
+  
+  **实验步骤**
+  
+  - 修改.gitlab-ci.yml文件
+  ```yaml
+stages:
+    - style
+    - test
+    - deploy
+pep8:
+    stage: style
+    script:
+        - pip install tox
+        - tox -e pep8
+    tags:
+        - python2.7
+unittst-py27:
+    stage: test
+    script:
+        - pip install tox
+        - tox -e py27
+    tags:
+        - python2.7
+unittst-py34:
+    stage: test
+    script:
+        - pip install tox
+        - tox -e py34
+    tags:
+        - python3.4
+docker-deploy:
+    stage: deploy
+    script:
+        - docker build -t flask-demo .
+        - if [ $(docker ps -aq --filter name=web) ]; then docker rm -f web; fi
+        - docker run -d -p 5000:5000 --name web flask-demo
+    tags:
+        - shell
+    only:
+        - master
+ ```
+  
+  **注意**
+  >1在上述实验过程中，可以在gitlab界面上设置master分支保护，只能允许hotfix或者realease分支merge。只有ci-runner通过后才能push到master分支<br/>
+  >2在上述yml文件中，deploy只限制在master分支(only master)。也就是说master分支才出发deploy,其他分支不触发部署，只触发代码检查...等操作。
+  
+  **缺点**
+  >以上CD只部署在CI服务器，真实情况下是不行的，会使其部署在其他服务器。
+  
+  #### 9.4 CI实现版本自动发布
+  
+  **实验步骤**
+  
+  - 在之前dns服务器搭建私有的docker registry
+  >(1)docker  run -d -v /opt/registry:/var/lib/registry -p 5000:5000 --restart=always --name registry registry:2<br/>
+  >(2)在dns-server的docker里面添加记录：[这台主机的ip] registry.example.com<br/>
+  >(3)重启dns-server的docker.这样就能在CI服务器上ping通registry.example.com了<br/>
+  >(4)在CI服务器上创建文件:vim /etc/docker/daemon.json写入内容：{"insecure-registries":["registry.example.com:5000"] }
+  >(5)测试：在ci服务器pull一个busybox镜像，然后push到registry.example.com:5000
+  >docker pull busybox
+  >docker tag busybox registry.example.com:5000/busybox
+  >docker push registry.example.com:5000/busybox(测试成功会出现pushed字眼)
+  
+  - 修改.gitlab-ci.yml文件
+  
+  ```yaml
+  stages:
+      - style
+      - test
+      - deploy
+      - release
+  pep8:
+      stage: style
+      script:
+          - pip install tox
+          - tox -e pep8
+      tags:
+          - python2.7
+      except:
+          - tags
+  unittst-py27:
+      stage: test
+      script:
+          - pip install tox
+          - tox -e py27
+      tags:
+          - python2.7
+      except:
+          - tags
+  unittst-py34:
+      stage: test
+      script:
+          - pip install tox
+          - tox -e py34
+      tags:
+          - python3.4
+      except:
+          - tags
+  docker-deploy:
+      stage: deploy
+      script:
+          - docker build -t flask-demo .
+          - if [ $(docker ps -aq --filter name=web) ]; then docker rm -f web; fi
+          - docker run -d -p 5000:5000 --name web flask-demo
+      tags:
+          - shell
+      only:
+          - master
+  docker-image-release:
+      stage: release
+      script:
+          - docker build -t registry.example.com:5000/flask-demo:$CI_COMMIT_TAG .
+          - docker push registry.example.com:5000/flask-demo:$CI_COMMIT_TAG
+      tags:
+          - shell
+      only:
+          - tags
+
+   ```
+   >说明：except:除去什么什么操作不触发；only tags 只在打tags的时候触发
+   
+  - 在gitlab web上new一个tab就能触发pipeline,使其push到registry服务器
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17860604109141129.png)
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18500819276866.png)
+  
+  - 最后在docker host上使用k8s或者docker swarm 或者docker原生的方法去update image就可以实现无宕机的更新线上代码。
+  
+  
+  
   
   
   
