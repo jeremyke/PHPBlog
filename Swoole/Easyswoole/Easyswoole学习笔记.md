@@ -7,6 +7,7 @@
   （1）vim ~/.bash_profile 添加环境变量：比如：alias php7=[php安装的bin路径]
   （2）搜索某个端口： netstat -anp | grep [你需要查询的端口号]
   （3）php里面抽象类的抽象方法都必须被子类实现
+  （4）trait的用法，参考https://blog.csdn.net/ssfz123/article/details/79849289
  ```
  
  **安装**
