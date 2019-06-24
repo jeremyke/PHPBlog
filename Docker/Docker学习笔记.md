@@ -606,7 +606,23 @@
   >(1)设置node的Lable:kubectl lable node [node名称] [key]=[value]
   >(2)在pod的yml文件上，指定nodeSelector:[key]=[value]
   
+  ## 8 容器监控
+   
+  #### 8.1 基本监控
+   
+  - cli工具
   
+  ```
+   docker top [容器ID] （容器的一些运行的进程的信息）
+   docker state（后台运行的容器的一些信息状态）
+  
+  ```
+   
+  - 可视化工具
+  
+  >weave scop，普罗米修斯
+  
+    
   ## 9 CI && CD
   
   #### 9.1 安装gitlab
