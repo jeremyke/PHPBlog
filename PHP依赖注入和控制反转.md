@@ -41,8 +41,9 @@
   
   图解：
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1561401590ewrew.png)
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1561401640hjk.png)
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1561401590ewrew.jpg)
+  
+  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1561401640hjk.jpg)
   
  
  
