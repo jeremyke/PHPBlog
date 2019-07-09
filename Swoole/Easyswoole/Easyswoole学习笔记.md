@@ -59,3 +59,121 @@
  
  这里使用php composer 来安装MysqliDb
  >composer require joshcam/mysqli-database-class:dev-master
+ 
+ 
+ 
+ ## 2.性能测试
+ 
+ - 工具apache bench,简称ab
+ 
+ - 安装
+ >yum -y install httpd-tools
+ 
+ - 使用
+ >(1)ab -n [总共请求数量] -c [并发数量] [测试域名]（例如：ab -n 1000 -c 100 https:www.lewaimai.com/）<br/>
+ >参数说明：Requests per second:    47.30 [#/sec] (mean)[每秒执行的请求数，qps]
+ 
+ ## 3. 消息队列
+ 
+ #### 3.1 消息队列
+ >流程图：生产者->Broker（消息处理中心（消息的存储，分发...））->消费者<br/>
+ >常用消息队列：kafka(分布式，多语言),rabbitMQ,redis(本课程使用redis+swoole4.X)
+ 
+ #### 3.2 redis
+ 
+ - 安装
+ 安装redis4.0.9以及phpredis扩展
+ 
+ - redis底层封装
+ ```php
+class Redis
+{
+    use Singleton;
+    public $redis = "";
+
+    private function __construct() {
+        try {
+            if(!extension_loaded('redis')){
+                throw new \Exception('redis扩展异常',400);
+            }
+            $this->redis = new \Redis();
+            //$redis_conf = Config::getInstance()->getConf('redis');
+            $redis_conf = \Yaconf::get('redis');
+            $result = $this->redis->connect($redis_conf['host'],$redis_conf['port'],$redis_conf['time_out']);
+            if($result===false){
+                throw new \Exception("redis连接失败",500);
+            }
+        } catch(\Exception $e) {
+            if(!empty($e->getCode())){
+                throw new \Exception($e->getMessage());
+            }else{
+                throw new \Exception("redis服务异常");
+            }
+        }
+    }
+
+    public function get($key) {
+        if(empty($key)) {
+            return '';
+        }
+        return $this->redis->get($key);
+    }
+
+    public function set($key, $value, $time = 0) {
+        if(empty($key)) {
+            return '';
+        }
+        if(is_array($value)) {
+            $value = json_encode($value);
+        }
+        if(!$time) {
+            return $this->redis->set($key, $value);
+        }
+        return $this->redis->setex($key, $time, $value);
+    }
+    /**
+     * 当类中不存在该方法时候，直接调用call 实现调用底层redis相关的方法
+     */
+    public function __call($name, $arguments) {
+
+        ///var_dump(...$arguments);
+        return $this->redis->$name(...$arguments);
+    }
+
+}
+
+```
+ - 配置文件
+ **初始化框架的时候引入配置文件**
+ ```php
+public static function initialize()
+    {
+        // TODO: Implement initialize() method.
+        date_default_timezone_set('Asia/Shanghai');
+        //获得原先的config配置项,加载到新的配置项中
+        self::loadConf(EASYSWOOLE_ROOT . '/Config');
+    }
+
+    //加载配置文件
+    function loadConf($ConfPath)
+    {
+        $Conf  = Config::getInstance();
+        $files = File::scanDirectory($ConfPath);
+        foreach ($files['files'] as $file) {
+            $data = require_once $file;
+            $Conf->setConf(strtolower(basename($file, '.php')), (array)$data);
+        }
+    }
+```
+ **使用yaconf**
+ >(1)安装： wget http://pecl.php.net/get/yaconf-1.0.7.tgz<br>
+ >tar -zxvf yaconf-1.0.7.tgz<br>
+ >phpize<br>
+ >make -j<br>
+ >make install<br>
+ >在php.ini加入yaconf(extension=yaconf yaconf.directory=/data/wwwroot/easyswoole/ini)<br>
+ >(2)配置文件定义<br>(host="127.0.0.1" port=6379 time_out=3)<br>
+ >(3)使用<br>
+ >\Yaconf::get('文件名')(得到的是一个数组)<br>
+ 
+ 
