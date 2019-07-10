@@ -176,4 +176,55 @@ public static function initialize()
  >(3)使用<br>
  >\Yaconf::get('文件名')(得到的是一个数组)<br>
  
+ #### 3.3 实现消息队列
+ 
+ **在mainServerCreate中创建3个进程**
+ ```php
+ $allNum = 3;
+ for ($i = 0 ;$i < $allNum;$i++){
+     ServerManager::getInstance()->getSwooleServer()->addProcess((new ConsumerTest("consumer_{$i}"))->getProcess());
+ }
+ ```
+ ***消费者**
+ ```php
+ public function run($arg)
+    {
+        // TODO: Implement run() method.
+        /*
+         * 举例，消费redis中的队列数据
+         * 定时500ms检测有没有任务，有的话就while死循环执行
+         */
+        $this->addTick(500,function (){
+            if(!$this->isRun){
+                $this->isRun = true;
+                while (true){
+                    try{
+                        $task = Di::getInstance()->get('REDIS')->lPop('task_list');
+                        var_dump($this->getProcessName());
+                        if($task){
+                            // do you task
+                            var_dump($this->getProcessName().'--------->'.$task);
+                            Logger::getInstance()->log($this->getProcessName().'----'.$task);
+                        }else{
+                            break;
+                        }
+                    }catch (\Throwable $throwable){
+                        break;
+                    }
+                }
+                $this->isRun = false;
+            }
+            //var_dump($this->getProcessName().' task run check');
+        });
+```
+**生产者**
+```php
+//消息队列生产者
+    public function pub()
+    {
+        $params = $this->request()->getRequestParam();
+        Di::getInstance()->get("REDIS")->rPush('task_list',$params['f']);
+    }
+```
+ 
  
