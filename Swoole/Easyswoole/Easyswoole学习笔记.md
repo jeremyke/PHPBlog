@@ -226,5 +226,7 @@ public static function initialize()
         Di::getInstance()->get("REDIS")->rPush('task_list',$params['f']);
     }
 ```
+
+ #### 3.4 实现前后端分离
  
  
