@@ -229,4 +229,20 @@ public static function initialize()
 
  #### 3.4 实现前后端分离
  
+ **配置nginx**
+ >9502端口直接指向webroot目录；<br>
+ >php转发到swoole服务器
+ ```bash
+if (!-e $request_filename){
+    proxy_pass http://127.0.0.1:9501;
+}
+```
+ **功能流程图**
+ 
+ ![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/16570127747882.png)
+ 
+ **技术流程图**
+ 
+ ![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/17860531256108.png)
+ 
  
