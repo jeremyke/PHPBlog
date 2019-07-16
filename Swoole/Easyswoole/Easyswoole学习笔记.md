@@ -245,4 +245,8 @@ if (!-e $request_filename){
  
  ![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/17860531256108.png)
  
+ ## 4. 小视频上传
+ 
+ #### 4.1 上传到本地服务器
+ 
  
