@@ -248,5 +248,162 @@ if (!-e $request_filename){
  ## 4. 小视频上传
  
  #### 4.1 上传到本地服务器
+ >这一章节主要看下作者对业务逻辑的封装以及php的反射机制.
+ 
+ - upload.php
+ ```php
+<?php
+public function file()
+    {
+        try{
+            $request = $this->request();
+            $files = $request->getSwooleRequest()->files;
+            $types = array_keys($files);
+            $type = $types[0];
+            if(empty($type)) {
+                return $this->writeJson(400, '上传文件不合法');
+            }
+            //$video_obj = new Video($request,$type);
+            //$file = $video_obj->upload();
+            $classObj = new ClassArr();
+            $classStats = $classObj->uploadClassStat();
+            $uploadObj = $classObj->initClass($type, $classStats, [$request, $type]);
+            $file = $uploadObj->upload();
+            if(empty($file)){
+                throw new \Exception('上传失败');
+            }
+            $data = [
+              'url' =>  $file,
+            ];
+            return $this->writeJson(200,"上传成功",$data);
+        }catch (\Exception $e){
+            return $this->writeJson(400,$e->getMessage(),[]);
+        }
+    }
+ ```
+ - 反射机制
+  ```php
+  <?php
+  /**
+       * 反射对应的类文件
+       * @return array
+       */
+      public function uploadClassStat() {
+          return [
+              "image" => "\App\Lib\Upload\Image",
+              "video" => "\App\Lib\Upload\Video",
+          ];
+      }
+  
+      /**
+       * 反射写法
+       * @param $type 反射类型
+       * @param $supportedClass 反射类数组
+       * @param array $params 参数
+       * @param bool $needInstance 是否需要实例化
+       * @return bool|object
+       * @throws \ReflectionException
+       */
+      public function initClass($type, $supportedClass, $params = [], $needInstance = true) {
+          if(!array_key_exists($type, $supportedClass)) {
+              return false;
+          }
+  
+          $className = $supportedClass[$type];
+  
+          return $needInstance ? (new \ReflectionClass($className))->newInstanceArgs($params) : $className;
+      }
+  ```
+ - 上传文件基类
+ ```php
+<?php
+namespace App\Lib\Upload;
+
+use App\Lib\Utils;
+
+class Base {
+
+    /**
+     * 上传文件的 file - key
+     * @var string
+     */
+    public $type = "";
+
+    public function __construct($request, $type = null) {
+        $this->request = $request;
+        if(empty($type)) {
+            $files = $this->request->getSwooleRequest()->files;
+            $types = array_keys($files);
+            $this->type = $types[0];
+        } else {
+            $this->type = $type;
+        }
+    }
+
+
+    //上传文件
+    public function upload() {
+        if($this->type != $this->fileType) {
+            return false;
+        }
+        $videos = $this->request->getUploadedFile($this->type);
+        $this->size = $videos->getSize();
+        $this->checkSize();
+        $fileName = $videos->getClientFileName();
+        $this->clientMediaType = $videos->getClientMediaType();
+        $this->checkMediaType();
+        $file = $this->getFile($fileName);
+        $flag = $videos->moveTo($file);
+        if(!empty($flag)) {
+            return $this->file;
+        }
+
+        return false;
+
+    }
+
+    public function getFile($fileName) {
+        $pathinfo = pathinfo($fileName);
+        $extension = $pathinfo['extension'];
+
+        $dirname = "/".$this->type . "/". date("Y") . "/" . date("m");
+        $dir = EASYSWOOLE_ROOT  . "/webroot" . $dirname;
+        if(!is_dir($dir)) {
+            mkdir($dir, 0777 , true);
+        }
+
+        $basename = "/" .Utils::getFileKey($fileName) . ".".$extension;
+
+        $this->file = $dirname . $basename;
+        return$dir  . $basename;
+
+    }
+
+    /**
+     * 检查文件类型
+     */
+    public function checkMediaType() {
+        $clientMediaType = explode("/", $this->clientMediaType);
+        $clientMediaType = $clientMediaType[1] ?? "";
+        if(empty($clientMediaType)) {
+            throw new \Exception("上传{$this->type}文件不合法");
+        }
+        if(!in_array($clientMediaType, $this->fileExtTypes)) {
+            throw new \Exception("上传{$this->type}文件不合法");
+        }
+
+        return true;
+    }
+    public function checkSize() {
+        if(empty($this->size)) {
+            return false;
+        }
+
+        // todo
+        //
+        //
+    }
+}
+```  
  
  
