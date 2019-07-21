@@ -404,6 +404,25 @@ class Base {
         //
     }
 }
-```  
- 
+```
+ - 数据验证（validate）
+ >这部分主要是阅读文档和源码，以明确框架提供的验证方法以及如何自定义验证函数  
+ ```php
+ <?php
+//数据校验
+        $params = $this->request()->getRequestParam();
+        Logger::getInstance()->log($this->logType . "add:" .json_encode($params));
+        $valitor = new Validate();
+        $valitor->addColumn('name', "视频名称错误")->required('视频名称不能为空')->lengthMin(2, '最小长度不小于2')->lengthMax(20, '最大长度不能大于20');
+        $valitor->addColumn('url', "视频地址错误")->required('视频地址参数缺失')->notEmpty('视频地址不能为空');
+        $valitor->addColumn('image', "图片地址错误")->required('图片地址参数缺失')->notEmpty('图片地址不能为空');
+        $valitor->addColumn('content', "视频描述错误")->required('视频描述参数缺失')->notEmpty('视频描述不能为空');
+        $valitor->addColumn('cat_id', "栏目ID错误")->required('栏目ID参数缺失')->notEmpty('栏目ID不能为空');
+        $validata = $valitor->validate($params);
+        if(!$validata) {
+            //print_r($validata->getErrorList());
+            return $this->writeJson(Status::CODE_BAD_REQUEST, $valitor->getError()->__toString());
+        }
+
+```
  
