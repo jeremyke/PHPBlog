@@ -185,7 +185,7 @@ public static function initialize()
      ServerManager::getInstance()->getSwooleServer()->addProcess((new ConsumerTest("consumer_{$i}"))->getProcess());
  }
  ```
- ***消费者**
+ **消费者**
  ```php
  public function run($arg)
     {
