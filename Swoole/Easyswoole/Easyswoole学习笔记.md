@@ -425,4 +425,59 @@ class Base {
         }
 
 ```
+ #### 4.2 静态化API
+ >在用户请求之前，预先生成静态化json数据，不用再实时请求mysql，直接将json渲染到页面。
  
+ - easyswoole+crontab定时任务
+ 
+ 注入任务
+ ```php
+ <?php
+public static function mainServerCreate(EventRegister $register)
+    {
+        //crontab任务计划
+        Crontab::getInstance()->addTask(TestTask::setRule("*/1 * * * *"));
+
+    }
+```
+任务规则
+```php
+<?php
+/**
+ * Description:
+ * User: Jeremy.Ke
+ * Time: 2019/8/1 17:32
+ */
+namespace App\Crontab;
+
+use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use App\Lib\Cache\Video as videoCache;
+
+class TestTask extends AbstractCronTask
+{
+    public static $rules= "*/1 * * * *";
+    public static function getRule(): string
+    {
+        return self::$rules;
+    }
+    public static function setRule($rules)
+    {
+        self::$rules = $rules;
+        return self::class;
+    }
+
+    public static function getTaskName(): string
+    {
+        // TODO: Implement getTaskName() method.
+        // 定时任务名称
+        return 'taskOne';
+    }
+
+    //消费任务
+    static function run(\swoole_server $server, int $taskId, int $fromWorkerId,$flags=null)
+    {
+        $videoCache = new videoCache();
+        $videoCache->setIndexVideo();
+    }
+}
+```
