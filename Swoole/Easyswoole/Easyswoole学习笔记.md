@@ -481,3 +481,36 @@ class TestTask extends AbstractCronTask
     }
 }
 ```
+
+ - swoole的timer实现
+ 
+ 注入任务
+ ```php
+ <?php
+$register->add(EventRegister::onWorkerStart, function (\swoole_server $server, $workerId) {
+            if ($workerId == 0) {
+                Timer::getInstance()->loop(10 * 1000, function () {
+                    $obj = new \App\Lib\Cache\Video();
+                    $obj->setIndexVideo();
+                });
+            }
+        });
+```
+消费端和上面一样。
+
+ - 写入swoole_table
+ >首先安装fast-cache插件
+ ```shell
+ composer require easyswoole/fast-cache
+ ```
+ 
+ 服务注册：
+ ```php
+<?php
+use EasySwoole\FastCache\Cache;
+Cache::getInstance()->setTempDir(EASYSWOOLE_TEMP_DIR)->attachToServer(ServerManager::getInstance()->getSwooleServer());
+```
+
+ - 写入reids
+ 略。
+
