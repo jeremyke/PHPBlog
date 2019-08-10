@@ -513,4 +513,14 @@ Cache::getInstance()->setTempDir(EASYSWOOLE_TEMP_DIR)->attachToServer(ServerMana
 
  - 写入reids
  略。
+ 
+ #### 4.3 异步任务(worker进程实现)
+ ```php
+<?php
+use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
+use EasySwoole\Component\Di;
+TaskManager::async(function () use($id){
+    Di::getInstance()->get("REDIS")->zincrby(\Yaconf::get('redis.video_play_key'),1,$id);
+});
+```
 
