@@ -524,3 +524,7 @@ TaskManager::async(function () use($id){
 });
 ```
 
+ ## 5. elasticsearch
+ 
+ #### 5.1 elasticsearch安装
+
