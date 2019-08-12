@@ -526,5 +526,6 @@ TaskManager::async(function () use($id){
 
  ## 5. elasticsearch
  
- #### 5.1 elasticsearch安装
+ #### 5.1 elasticsearch和head的配合使用
+ 
 
