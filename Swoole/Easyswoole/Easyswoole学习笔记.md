@@ -528,4 +528,136 @@ TaskManager::async(function () use($id){
  
  #### 5.1 elasticsearch和head的配合使用
  
+ - elasticsearch安装
+ >移步我的elastic专栏（本实验是搭建els集群，所以我这里启动了2个els节点）
+ 
+ - head安装
+ >head是elasticsearch的可视化项目，搭建方法很多，这里我选择用chrome的一个插件elasticsearch-head非常省事
+ 
+ - 创建索引
+ >http://47.98.143.87:9502/my_video/
+ ```json
+{
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text"
+      },
+      "cat_id": {
+        "type": "integer"
+      },
+      "image": {
+        "type": "text"
+      },
+      "url": {
+        "type": "text"
+      },
+      "type": {
+        "type": "byte"
+      },
+      "content": {
+        "type": "text"
+      },
+      "uploader": {
+        "type": "keyword"
+      },
+      "create_time": {
+        "type": "integer"
+      },
+      "update_time": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "byte"
+      },
+      "video_id": {
+        "type": "keyword"
+      }
+    }
+  }
+}
+```
+结果如下，说明创建成功！！！
+```json
+{
+"acknowledged": true,
+"shards_acknowledged": true,
+"index": "my_video"
+}
+```
+>也可以创建模板，便于快速下次创建索引。
 
+ - 创建一条elasticsearch数据
+ 
+ ```bash
+请求：[url]/[索引名]/[索引类型]/[id]/-put（例如：http://47.98.143.87:9502/my_video/_doc/1/）自定义id
+请求参数：{
+       "name": "许嵩",
+       "cat_id": 1,
+       "image": "/user/upload/1.jpg",
+       "url": "http://www.baidu.com",
+       "uploader": "ace",
+       "status": 1,
+       "video_id": "sdfsdftesdt"
+     }
+成功：{
+   "_index": "my_video",
+   "_type": "_doc",
+   "_id": "1",
+   "_version": 1,
+   "result": "created",
+   "_shards": {
+   "total": 2,
+   "successful": 2,
+   "failed": 0
+   },
+   "_seq_no": 0,
+   "_primary_term": 1
+   }
+
+```
+```bash
+请求：[url]/[索引名]/[索引类型]/-post（例如：http://47.98.143.87:9502/my_video/_doc/）随机ID
+请求参数：{
+       "name": "许嵩",
+       "cat_id": 1,
+       "image": "/user/upload/1.jpg",
+       "url": "http://www.baidu.com",
+       "uploader": "ace",
+       "status": 1,
+       "video_id": "sdfsdftesdt"
+     }
+成功：{
+   "_index": "my_video",
+   "_type": "_doc",
+   "_id": "1",
+   "_version": 1,
+   "result": "created",
+   "_shards": {
+   "total": 2,
+   "successful": 2,
+   "failed": 0
+   },
+   "_seq_no": 0,
+   "_primary_term": 1
+   }
+```
+ - 文档查询
+ >英文单词可以直接基本查询，中文只能通过api接口
+ 
+ **请求：**
+ http://47.98.143.87:9502/my_video/_doc/   _search   [post]
+ 
+ **参数：**
+ ```json
+{
+  "query": {
+    "match": {
+      "name": "许嵩"
+    }
+  }
+}
+```
+ 
+ #### 5.1 elasticsearch-php的底层类库的安装和部署
+ 
