@@ -661,3 +661,7 @@ TaskManager::async(function () use($id){
  
  #### 5.1 elasticsearch-php的底层类库的安装和部署
  
+
+
+
+ ## 6. 性能调优
