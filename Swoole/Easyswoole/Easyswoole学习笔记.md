@@ -589,45 +589,25 @@ TaskManager::async(function () use($id){
 
  - 创建一条elasticsearch数据
  
- ```bash
-请求：[url]/[索引名]/[索引类型]/[id]/-put（例如：http://47.98.143.87:9502/my_video/_doc/1/）自定义id
-请求参数：{
-       "name": "许嵩",
-       "cat_id": 1,
-       "image": "/user/upload/1.jpg",
-       "url": "http://www.baidu.com",
-       "uploader": "ace",
-       "status": 1,
-       "video_id": "sdfsdftesdt"
-     }
-成功：{
-   "_index": "my_video",
-   "_type": "_doc",
-   "_id": "1",
-   "_version": 1,
-   "result": "created",
-   "_shards": {
-   "total": 2,
-   "successful": 2,
-   "failed": 0
-   },
-   "_seq_no": 0,
-   "_primary_term": 1
-   }
+ **请求：**
+ >[url]/[索引名]/[索引类型]/[id]/-put（例如：http://47.98.143.87:9502/my_video/_doc/1/）自定义id
+ 
+ **请求参数：**
+ ```json
+{
+   "name": "许嵩",
+   "cat_id": 1,
+   "image": "/user/upload/1.jpg",
+   "url": "http://www.baidu.com",
+   "uploader": "ace",
+   "status": 1,
+   "video_id": "sdfsdftesdt"
+}
 
 ```
-```bash
-请求：[url]/[索引名]/[索引类型]/-post（例如：http://47.98.143.87:9502/my_video/_doc/）随机ID
-请求参数：{
-       "name": "许嵩",
-       "cat_id": 1,
-       "image": "/user/upload/1.jpg",
-       "url": "http://www.baidu.com",
-       "uploader": "ace",
-       "status": 1,
-       "video_id": "sdfsdftesdt"
-     }
-成功：{
+**成功返回：**
+```json
+{
    "_index": "my_video",
    "_type": "_doc",
    "_id": "1",
@@ -640,13 +620,46 @@ TaskManager::async(function () use($id){
    },
    "_seq_no": 0,
    "_primary_term": 1
-   }
+}
 ```
- - 文档查询
- >英文单词可以直接基本查询，中文只能通过api接口
+**请求：**
+>[url]/[索引名]/[索引类型]/-post（例如：http://47.98.143.87:9502/my_video/_doc/）随机ID
+
+ **请求参数：**
+ ```json
+{
+       "name": "许嵩",
+       "cat_id": 1,
+       "image": "/user/upload/1.jpg",
+       "url": "http://www.baidu.com",
+       "uploader": "ace",
+       "status": 1,
+       "video_id": "sdfsdftesdt"
+     }
+```
+**成功返回：**
+```json
+{
+   "_index": "my_video",
+   "_type": "_doc",
+   "_id": "1",
+   "_version": 1,
+   "result": "created",
+   "_shards": {
+   "total": 2,
+   "successful": 2,
+   "failed": 0
+   },
+   "_seq_no": 0,
+   "_primary_term": 1
+}
+```
+
+- 文档查询
+>英文单词可以直接基本查询，中文只能通过api接口
  
  **请求：**
- http://47.98.143.87:9502/my_video/_doc/   _search   [post]
+ >http://47.98.143.87:9502/my_video/_doc/   _search   [post]
  
  **参数：**
  ```json
@@ -657,11 +670,186 @@ TaskManager::async(function () use($id){
     }
   }
 }
-```
- 
- #### 5.1 elasticsearch-php的底层类库的安装和部署
- 
 
+```
+或者：
+ ```json
+{
+  "query": {
+    "match_phrase": {
+      "name": "许嵩"
+    }
+  }
+}
+
+```
+
+ 
+ #### 5.2 elasticsearch-php的底层类库的安装和部署
+ 
+ - 安装
+ >在composer.json文件里面添加
+ ```json
+{
+     "require":{
+         "elasticsearch/elasticsearch":"^7.0"
+     }
+}
+```
+- 使用
+
+**搜索基类**
+```php
+<?php
+/**
+ * Description:
+ * User: Jeremy.Ke
+ * Time: 2019/8/15 19:35
+ */
+namespace App\Model\Es;
+
+use EasySwoole\Component\Singleton;
+use Elasticsearch\ClientBuilder;
+
+class EsClient
+{
+    use Singleton;
+    public $esClient = null;
+    private function __construct()
+    {
+        $es_conf = \Yaconf::get('es');
+        $this->esClient = ClientBuilder::create()->setHosts([$es_conf['host'].":".$es_conf['port']])->build();
+    }
+
+    public function __call($name, $arguments)
+    {
+        // TODO: Implement __call() method.
+        return $this->esClient->$name(...$arguments);
+    }
+}
+```
+**调用**
+```php
+<?php
+public function elsLike()
+{
+    $param = [
+        'index'=>'my_video',
+        'type'=>'_doc',
+        'body'=>[
+            'query'=>[
+                'match'=>[
+                    'name'=>'杰'
+                ],
+            ],
+        ],
+
+    ];
+    $client = ClientBuilder::create()->setHosts(['127.0.0.1:9502'])->build();
+    $res = $client->search($param);
+    return $this->writeJson(200,'ok',$res);
+}
+?>
+```
+
+#### 5.3 elasticsearch-analysic-ik分词器
+
+ - 安装
+> ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.0/elasticsearch-analysis-ik-7.0.0.zip
+> 装完需要重启2.restart elasticsearch
+
+ - 创建mapping
+ >curl -XPOST http://localhost:9200/index/_mapping -H 'Content-Type:application/json' -d'
+```json
+{
+    "properties": {
+        "content": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_smart"
+        }
+    }
+
+}
+```
+ - query with highlighting
+ >curl -XPOST http://localhost:9200/index/_search  -H 'Content-Type:application/json' -d'
+ ```json
+ {
+     "query" : { "match" : { "content" : "中国" }},
+     "highlight" : {
+         "pre_tags" : ["<tag1>", "<tag2>"],
+         "post_tags" : ["</tag1>", "</tag2>"],
+         "fields" : {
+             "content" : {}
+         }
+     }
+ }
+```
+**结果**
+```json
+{
+    "took": 14,
+    "timed_out": false,
+    "_shards": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0
+    },
+    "hits": {
+        "total": 2,
+        "max_score": 2,
+        "hits": [
+            {
+                "_index": "index",
+                "_type": "fulltext",
+                "_id": "4",
+                "_score": 2,
+                "_source": {
+                    "content": "中国驻洛杉矶领事馆遭亚裔男子枪击 嫌犯已自首"
+                },
+                "highlight": {
+                    "content": [
+                        "<tag1>中国</tag1>驻洛杉矶领事馆遭亚裔男子枪击 嫌犯已自首 "
+                    ]
+                }
+            },
+            {
+                "_index": "index",
+                "_type": "fulltext",
+                "_id": "3",
+                "_score": 2,
+                "_source": {
+                    "content": "中韩渔警冲突调查：韩警平均每天扣1艘中国渔船"
+                },
+                "highlight": {
+                    "content": [
+                        "均每天扣1艘<tag1>中国</tag1>渔船 "
+                    ]
+                }
+            }
+        ]
+    }
+}
+```
+ - 自定义词典
+ >IKAnalyzer.cfg.xml can be located at {conf}/analysis-ik/config/IKAnalyzer.cfg.xml or {plugins}/elasticsearch-analysis-ik-*/config/IKAnalyzer.cfg.xml
+ 
+```xml
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+ <properties>
+ 	<comment>IK Analyzer 扩展配置</comment>
+ 	<!--用户可以在这里配置自己的扩展字典 -->
+ 	<entry key="ext_dict">custom/mydict.dic;custom/single_word_low_freq.dic</entry>
+ 	 <!--用户可以在这里配置自己的扩展停止词字典-->
+ 	<entry key="ext_stopwords">custom/ext_stopword.dic</entry>
+  	<!--用户可以在这里配置远程扩展字典 -->
+ 	<entry key="remote_ext_dict">location</entry>
+  	<!--用户可以在这里配置远程扩展停止词字典-->
+ 	<entry key="remote_ext_stopwords">http://xxx.com/xxx.dic</entry>
+ </properties>
+ ```                                
 
 
  ## 6. 性能调优
