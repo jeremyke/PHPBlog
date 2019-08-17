@@ -852,3 +852,17 @@ public function elsLike()
  ```                                
 
  ## 6. 性能调优
+ 
+ ## 7. 总结
+ 
+ - 多进程，异步任务，消息队列
+ - 定时器，连接池，协程
+ - 全局事件注册
+ - 框架底层源码分析
+ - elasticsearch搜索
+ - yaconf配置文件插件
+ - 应对高并发
+ - 静态api缓存(redis，文件，swoole_table)
+ - nginx+lua+easyswoole
+ 
+ 
