@@ -854,15 +854,138 @@ public function elsLike()
  ## 6. 性能调优
  
  #### 6.1 mysql协程连接池
+  - 全局事件注册连接池
+  ```php
+  <?php
+ //注册mysql连接池
+ PoolManager::getInstance()->register(MysqlPool::class);
+```
+
+ - mysqlPool
+ ```php
+ <?php
+class MysqlPool extends AbstractPool
+{
+    /**
+     * 请在此处返回一个数据库链接实例
+     * @return MysqlObject
+     */
+    protected function createObject()
+    {
+        //$conf = Config::getInstance()->getConf("MYSQL");
+        $conf = \Yaconf::get("mysql");
+        $dbConf = new \EasySwoole\Mysqli\Config($conf);
+        return new MysqlObject($dbConf);
+    }
+}
+
+```
+ - mysqlObj
+ ```php
+ <?php
+class MysqlObject extends Mysqli implements PoolObjectInterface
+{
+    function gc()
+    {
+        // 重置为初始状态
+        $this->resetDbStatus();
+        // 关闭数据库连接
+        $this->getMysqlClient()->close();
+    }
+
+    function objectRestore()
+    {
+        // 重置为初始状态
+        $this->resetDbStatus();
+    }
+
+    /**
+     * 每个链接使用之前 都会调用此方法 请返回 true / false
+     * 返回false时PoolManager会回收该链接 并重新进入获取链接流程
+     * @return bool 返回 true 表示该链接可用 false 表示该链接已不可用 需要回收
+     */
+    function beforeUse(): bool
+    {
+        // 此处可以进行链接是否断线的判断 使用不同的数据库操作类时可以根据自己情况修改
+        return $this->getMysqlClient()->connected;
+    }
+}
+```
+ - 模型基类
+ ```php
+<?php
+class Base
+{
+    public $db;
+    public function __construct()
+    {
+        $timeout = \Yaconf::get("mysql.POOL_TIME_OUT");
+        $mysqlObject = PoolManager::getInstance()->getPool(MysqlPool::class)->getObj($timeout);
+        // 类型的判定
+        if ($mysqlObject instanceof MysqlObject) {
+            $this->db = $mysqlObject;
+        } else {
+            throw new \Exception('Mysql Pool is error');
+        }
+    }
+    public function __destruct()
+    {
+        if ($this->db instanceof MysqlObject) {
+            PoolManager::getInstance()->getPool(MysqlPool::class)->recycleObj($this->db);
+            // 请注意 此处db是该链接对象的引用 即使操作了回收 仍然能访问
+            // 安全起见 请一定记得设置为null 避免再次使用导致不可预知的问题
+            $this->db = null;
+        }
+    }
+
+    /**
+     * 通过ID 获取 基本信息
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function getById($id) {
+        $id = intval($id);
+        if(empty($id)) {
+            return [];
+        }
+
+        $this->db->where ("id", $id);
+        $result = $this->db->getOne($this->tableName);
+        return $result ?? [];
+    }
+
+}
+```
+ - 调用
+ ```php
+<?php
+class Pool extends Base {
+
+    public function mysqldemo() {
+
+        /*$config = \Yaconf::get("mysql");
+        $db = PoolManager::getInstance()->getPool(MysqlPool::class)->getObj($config['POOL_TIME_OUT']);
+        $result = ($db->get('video'));
+        return $this->writeJson(200, 'OK', $result);*/
+
+        $obj = new VideoPool();
+        $result = $obj->getById(1);
+        return $this->writeJson(200, 'OK', $result);
+    }
+}
+```
  #### 6.2 openresty介绍
+ >用openresty代替nginx（略）
+ 
  #### 6.3 负载均衡
+ >主要讲的是配置权重的负载均衡（略）
  
  ## 7. 总结
  
  - 多进程，异步任务，消息队列
- - 定时器，连接池，协程
+ - 定时器，协程连接池
  - 全局事件注册
- - 框架底层源码分析
  - elasticsearch搜索
  - yaconf配置文件插件
  - 应对高并发
