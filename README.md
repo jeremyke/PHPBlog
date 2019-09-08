@@ -1,13 +1,12 @@
 # PHPBlog
-PHP技术知识梳理
- - 20190516   更新了Docker和优化了目录
- - 20190517   更新了镜像发布
- - 20190519   更新了docker网络
- - 20190521   更新了docker文件持久化
- - 20190526   更新了docker swarm
- - 20190531   更新了版本控制之Git
- - 20190605   更新了k8s
- - 20190606   更新了docker stack的应用
- - 20190623   更新了ci cd
- - 20190623   更新了easyswoole
- - 20190630   更新了elastcsearch
+
+大家好，我是一名phper,这个项目主要记录我本人平时开发中攻克的的知识壁垒，秉着开源思想，这里简单的分类记录一二，还望各位看官多多点赞！！！
+
+## PHP技术知识梳理
+
+ - docker
+ - mysql
+ - elasticsearch
+ - nginx
+ - swoole
+ 
