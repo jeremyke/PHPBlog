@@ -48,6 +48,7 @@
  
  ## 3.PHP自动加载？
  
+ #### 3.1 __autoload()
  当我们在使用一个类时，如果发现这个类没有加载，就会自动运行 __autoload() 函数，这个函数是我们在程序中自定义的，在这个函数中我们可以加载需要使用的类。
  ```php
  <?php
@@ -65,7 +66,7 @@
  解决方案：
  使用一个 __autoload调用堆栈 ，不同的映射关系写到不同的 __autoload函数 中去，然后统一注册统一管理，这个就是 PHP5 引入的 SPL Autoload 。
  
- spl_autoload：PHP标准自动加载
+ #### 3.2 spl_autoload：PHP标准自动加载
  
  ```php
  <?php
@@ -83,7 +84,7 @@
      // ...
    }
  }
- spl_autoload_register(MyClass::autoload);
+ spl_autoload_register(MyClass::autoload);//或者写成：spl_autoload_register(['MyClass','autoload']);
  
  // 非静态方法
  class MyClass2 {
@@ -97,3 +98,50 @@
  ```
  spl_autoload_register() 就是我们上面所说的__autoload调用堆栈，我们可以向这个函数注册多个我们自己的 autoload() 函数，当 PHP 找不到类名时，
  PHP就会调用这个堆栈，然后去调用自定义的 autoload() 函数，实现自动加载功能。如果我们不向这个函数输入任何参数，那么就会默认注册 spl_autoload() 函数。
+ 
+ 一个简单的autoload类：
+ ```php
+ <?php
+ class autoloader {
+   public static $loader;
+   public static function init() {
+     if (self::$loader == NULL)
+       self::$loader = new self ();
+     return self::$loader;
+   }
+   public function __construct() {
+     spl_autoload_register ( array ($this, 'model' ) );
+     spl_autoload_register ( array ($this, 'helper' ) );
+     spl_autoload_register ( array ($this, 'controller' ) );
+     spl_autoload_register ( array ($this, 'library' ) );
+   }
+   public function library($class) {
+     set_include_path ( get_include_path () . PATH_SEPARATOR . '/lib/' );
+     spl_autoload_extensions ( '.library.php' );
+     spl_autoload ( $class );
+   }
+   public function controller($class) {
+     $class = preg_replace ( '/_controller$/ui', '', $class );
+     set_include_path ( get_include_path () . PATH_SEPARATOR . '/controller/' );
+     spl_autoload_extensions ( '.controller.php' );
+     spl_autoload ( $class );
+   }
+   public function model($class) {
+     $class = preg_replace ( '/_model$/ui', '', $class );
+     set_include_path ( get_include_path () . PATH_SEPARATOR . '/model/' );
+     spl_autoload_extensions ( '.model.php' );
+     spl_autoload ( $class );
+   }
+   public function helper($class) {
+     $class = preg_replace ( '/_helper$/ui', '', $class );
+     set_include_path ( get_include_path () . PATH_SEPARATOR . '/helper/' );
+     spl_autoload_extensions ( '.helper.php' );
+     spl_autoload ( $class );
+   }
+ }
+ //call
+ autoloader::init ();
+ ?>
+ ```
+ #### 3.3 Composer自动加载文件??
+ 
