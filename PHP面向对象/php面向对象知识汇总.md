@@ -45,3 +45,55 @@
  ##### 2.3 多态性
  >多态性是指相同的操作或函数、过程可作用于同一个类的多种类型的对象上并获得不同的结果。也即不同的对象，收到同一消息将可以产生不同的结果，这种现象称为多态性。
  多态性增强了软件的灵活性和重用性。
+ 
+ ## 3.PHP自动加载？
+ 
+ 当我们在使用一个类时，如果发现这个类没有加载，就会自动运行 __autoload() 函数，这个函数是我们在程序中自定义的，在这个函数中我们可以加载需要使用的类。
+ ```php
+ <?php
+ 
+ function __autoload($classname) {
+         require_once ($classname . ".class.php");
+ }
+ ```
+
+ __autoload函数的问题：
+ ```text
+  （1）如果系统中类名和磁盘文件的映射关系不尽相同，就必须在__autoload函数中实现所有的映射规则，效率和可维护性不太好，
+  （2） __autoload() 是全局函数只能定义一次，所有的类名与文件名对应的逻辑规则都要在一个函数里面实现，造成这个函数的臃肿。
+ ``` 
+ 解决方案：
+ 使用一个 __autoload调用堆栈 ，不同的映射关系写到不同的 __autoload函数 中去，然后统一注册统一管理，这个就是 PHP5 引入的 SPL Autoload 。
+ 
+ spl_autoload：PHP标准自动加载
+ 
+ ```php
+ <?php
+ function my_autoloader($class) {
+     include 'classes/' . $class . '.class.php';
+ }
+ //直接注册一个普通加载函数
+ spl_autoload_register('my_autoloader');
+ 
+ 
+ // 定义的 autoload 函数在 class 里
+ // 静态方法
+ class MyClass {
+   public static function autoload($className) {
+     // ...
+   }
+ }
+ spl_autoload_register(MyClass::autoload);
+ 
+ // 非静态方法
+ class MyClass2 {
+   public function autoload($className) {
+     // ...
+   }
+ }
+ $instance = new MyClass2();
+ spl_autoload_register(array($instance, 'autoload'));
+ 
+ ```
+ spl_autoload_register() 就是我们上面所说的__autoload调用堆栈，我们可以向这个函数注册多个我们自己的 autoload() 函数，当 PHP 找不到类名时，
+ PHP就会调用这个堆栈，然后去调用自定义的 autoload() 函数，实现自动加载功能。如果我们不向这个函数输入任何参数，那么就会默认注册 spl_autoload() 函数。

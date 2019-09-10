@@ -315,9 +315,63 @@ MVCC并发控制中，读操作可以分成两类：快照读 (snapshot read)�
  2、查看超时日志或者错误日志 ,一般会是查询以及大批量的插入会导致cpu与i/o上涨,当然不排除网络状态突然断了,导致一个请求服务
  器只接受到一半，比如where子句或分页子句没有发送,当然的一次被坑经历.
  ```
-
-
-
  
+ #### 5.4 PHP中MySQL、MySQLi和PDO的用法和区别？
+ - PHP的MySQL扩展
+ 设计开发允许PHP应用与MySQL数据库交互的早期扩展，mysql扩展提供了一个面向过程的接口，这里不做过多讨论。
+ ```php
+ <?php
+ $conn= @mysql_connect("localhost", "root", "") or die("数据库连接错误");
+ mysql_select_db("bbs", $conn);
+ mysql_query("set names 'utf8'");
+ echo "数据库连接成功";
+ ?>
+ ```
+ **说明**
+ （1）允许 PHP 应用与 MySQL 数据库交互的早期扩展
+ （2）提供了一个面向过程的接口，不支持后期的一些特性
  
+ - MySQLi扩展
+ mysqli扩展有一系列的优势，相对于mysql扩展的提升主要有：面向对象接口、 prepared语句支持、多语句执行支持、事务支持、增强的调试能力、嵌入式服务支持。
+ ```php
+ <?php
+ $conn= mysqli_connect('localhost', 'root', '', 'bbs');
+ if(!$conn){
+     die("数据库连接错误". mysqli_connect_error());
+ }else{
+     echo"数据库连接成功";
+ }
+ ?>
+ ```
+ **说明**
+ （1）面向对象接口
+ （2）prepared 语句支持
+ （3）多语句执行支持
+ （4）事务支持
+ （5）增强的调试能力 
+ 
+ - PDO
+ PHP数据对象，是PHP应用中的一个数据库抽象层规范。PDO提供了一个统一的API接口可以，使得你的PHP应用不去关心具体要连接的数据库服务器系统类型。
+ 也就是说，如果你使用PDO的API，可以在任何需要的时候无缝切换数据库服务器。
+ ```php
+ <?php
+ try{
+     $pdo=new  pdo("mysql:host=localhost;dbname=bbs","root","");
+ }catch(PDDException $e){
+     echo"数据库连接错误";
+ }
+ echo"数据库连接成功";
+ ?>
+ ```
+  **说明**
+  （1）PHP 应用中的一个数据库抽象层规范
+  （2）PDO 提供一个统一的 API 接口，无须关心数据库类型
+  （3）使用标准的 PDO API，可以快速无缝切换数据库
+
+ #### 5.5 ORM
+ 
+ - 定义
+ 
+ 对象关系映射（Object Relational Mapping，简称ORM），是通过使用描述对象和数据库之间映射的元数据，将程序中的对象自动持久化到关系数据库中。它是
+ 为了解决面向对象与关系数据库存在的互不匹配的现象的技术。ORM在业务逻辑层和数据库层之间充当了桥梁的作用。
  
