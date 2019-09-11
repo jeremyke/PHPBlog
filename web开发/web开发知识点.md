@@ -1,4 +1,3 @@
-
  ## Cookie 和 Session
  ```text
  Cookie:服务器端生成，储存在用户浏览器端，用于记录web用户的基本信息。
@@ -29,38 +28,4 @@
      GET 追加在URL上面的
  （3）安全性：
      POST 更安全
- ```
- ## Http详解
- ```text
- 请求包含：请求行；请求头；请求空白行
- HTTP请求头详解：
-     •   Accept ：可接受的数据类型（text/html，image/png）
-     •   Referer ：请求来源
-     •   Accept-Language ：可识别的语言类型
-     •   User-Agent ：用户代理信息（描述浏览器，可以用于判断用户的浏览器类型）
-     •   Accept-Encoding ：数据压缩算法（静态化技术）
-     •   If-Modified-Since ：（html、images、css、js）数据缓存的最后修改时间
- 响应包含：响应行；响应头；响应内容
- HTTP响应头详解：
-     •   Date ：响应时间
-     •   Server ：服务器相关信息（Apache与PHP版本）
-     •   Last-Modified ：文件的最后修改时间
-     •   Content-Length ：响应内容的字节长度
-     •   Content-Type ：响应内容的类型
-     •   Location ：重定向
-     •   Refresh ：停留N秒后跳转
-     •   Expires、Cache-Control ：缓存文件的过期时间与缓存开关
-     •   Content-Encoding ：响应内容压缩算法
- 错误码：
-     200 ：服务器端已成功接收到数据并进行了处理，然后返回到客户端（正常请求）
-     302 ：页面重定向
-     304 ：资源已被缓存
-     404 ：请求的服务器端资源未找到
-     500 ：服务器端出错
- ```
- ## TCP协议的三次握手,四次分手
- ```text
- 第一次握手：建立连接，客户端发送请求到服务器,进入SYN_SEND状态，等待服务器确认。
- 第二次握手:服务器收到请求,确认客户端的SYN,同时发送信息数据给客户端，服务器进入SYN_RECV状态。
- 第三次握手:客户端收到服务器的信息，向服务器发送确认包,发送完成后,客户端和服务器都进入ESTABLISHED状态,完成三次握手。
  ```
