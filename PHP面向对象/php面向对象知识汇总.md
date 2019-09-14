@@ -160,7 +160,7 @@
     第四点． 接口中的属性都为为static，而抽象类不是的。
  ```
  
- ## MVC的理解？
+ ## 5. MVC的理解？
  ```text
  用一种业务逻辑、数据、界面显示分离的方法组织代码，将业务逻辑聚集到一个部件里面，在改进和个性化定制界面及用户交互的同时，不需要重新编写业务逻辑。
  MVC被独特的发展起来用于映射传统的输入、处理和输出功能在一个逻辑的图形化用户界面的结构中。它把软件系统分为三个基本部分：
@@ -189,7 +189,7 @@
     5.视图与控制器间的过于紧密的连接并且降低了视图对模型数据的访问：视图与控制器是相互分离，但却是联系紧密的部件，视图没有控制器的存在，其应用是很有限的，
  反之亦然，这样就妨碍了他们的独立重用。依据模型操作接口的不同，视图可能需要多次调用才能获得足够的显示数据。对未变化数据的不必要的频繁访问，也将损害操作性能。
  ```
- ## OOP的理解？
+ ## 6. OOP的理解？
  ```text
     面向对象以对象为中心，将对象的内部属性与外部环境区分开来，将表征对象的内部属性数据的方法与外部隔离开来，其行为与属性构成一个整体，而系统功能则表现为一系列
  对象之间的相互作用的序列，能更加形象的模拟或表达现实世界。在编程组织中，对象的属性与方法不再像面向过程那样分开存放，而是视为一个整体（程序的最终实现其实还
@@ -209,4 +209,169 @@
  https://github.com/pangg/PHP-Interview-Summary
  https://github.com/lisiqiong/phper/blob/master/oop.md#%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8
  
+ ## 7. 对象
+ 
+ #### 7.1 foreach 迭代对象？
+ 
+ foreach用法和之前的数组遍历是一样的，只不过这里遍历的key是属性名，value是属性值。在类外部遍历时，只能遍历到public属性的，因为其它的都是受保护的，类外部不可见。
+ ```php
+ <?php
+ foreach ($hardDiskDrive as $property => $value) {
+     var_dump($property, $value);
+     echo '<br>';
+ }
+ ```
+ 如果我们想遍历出对象的所有属性，就需要控制foreach的行为，就需要给类对象，提供更多的功能，需要继承自Iterator的接口。
+ 为什么一个类只要实现了Iterator迭代器，其对象就可以被用作foreach的对象呢？
+ 在对PHP实例对象使用foreach语法时，会检查这个实例有没有实现Iterator接口，如果实现了，就会通过内置方法或使用实现类中的方法模拟foreach语句。
+ 
+ ![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/3b3de50e098eb76faea856150ba0df0c_720430-20190411154253007-1474559548.png)
+ 
+ ```php
+ <?php
+ class Team implements Iterator {
+     private $info = ['name' => 'itbsl', 'age' => 25, 'hobby' => 'fishing'];
+     public function rewind()
+     {
+         reset($this->info); //重置数组指针
+     }
+     public function valid()
+     {
+         //如果为null,表示没有元素，返回false
+         //如果不为null,返回true
+         return !is_null(key($this->info));
+     }
+ 
+     public function current()
+     {
+         return current($this->info);
+     }
+ 
+     public function key()
+     {
+         return key($this->info);
+     }
+ 
+     public function next()
+     {
+         return next($this->info);
+     }
+ 
+ }
+ 
+ $team = new Team();
+ 
+ foreach ($team as $property => $value) {
+ 
+     var_dump($property, $value);
+     echo '<br>';
+ }
+ 
+ ```
+ ```text
+  //输出
+   string(4) "name" string(5) "itbsl" 
+   string(3) "age" int(25) 
+   string(5) "hobby" string(7) "fishing" 
+ ```
+ #### 7.2 如何数组化操作对象 $obj[key]?
+ 
+ PHP提供了ArrayAccess接口使实现此接口的类的实例可以向操作数组一样通过$obj[key]来操作
+ 
+ ```php
+ <?php
+ class obj implements arrayaccess{
+     private $container = array();
+     public function __construct(){
+         $this->container = array(
+             "one"   => 1,
+             "two"   => 2,
+             "three" => 3,
+         );
+     }
+ 
+ //设置一个偏移位置的值
+    public function offsetSet($offset, $value){
+         if(is_null($offset)){
+            $this->container[] = $value;
+         } else {
+             $this->container[$offset] = $value;
+         }
+     }
+ 
+ //检查一个偏移位置是否存在
+     public function offsetExists($offset) {
+         return isset($this->container[$offset]);
+     }
+ 
+ //复位一个偏移位置的值
+     public function offsetUnset($offset) {
+         unset($this->container[$offset]);
+     }
+ 
+ //获取一个偏移位置的值
+     public function offsetGet($offset){
+         return isset($this->container[$offset]) ? $this->container[$offset]: null;
+     }
+ }
+ //对该类测试使用：
+ 
+ $obj = new obj;
+ var_dump(isset($obj["two"]));
+ var_dump($obj["two"]);
+ unset($obj["two"]);
+ var_dump(isset($obj["two"]));
+ $obj["two"] = "A value";
+ var_dump($obj["two"]);
+ $obj[] = 'Append 1';
+ $obj[] = 'Append 2';
+ $obj[] = 'Append 3';
+ print_r($obj);
+ ```
+ 输出
+ ```text
+ bool(true)
+ 
+ int(2)
+ 
+ bool(false)
+ 
+ string(7) "A value"
+ 
+ obj Object
+ 
+ (
+     [container:obj:private] => Array
+         (
+             [one] => 1
+             [three] => 3
+             [two] => A value
+             [0] => Append 1
+             [1] => Append 2
+             [2] => Append 3
+         )
+ )
+ ```
+ #### 7.3 如何函数化对象 $obj(123)?
+ 
+ 利用PHP提供的魔术函数__invoke()方法可以直接实现，当尝试以调用函数的方式调用一个对象时，__invoke() 方法会被自动调用
+ 
+ ```php
+ <?php
+ class CallableClass
+ {
+     function __invoke($x) {
+         var_dump($x);
+     }
+ }
+ $obj = new CallableClass;
+ 
+ $obj(5);
+ var_dump(is_callable($obj));
+ ```
+ 输出：
+ ```text
+ int(5)
+ bool(true)
+ ```
  

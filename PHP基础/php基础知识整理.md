@@ -33,6 +33,96 @@
   isset（）检查变量（或数组的元素或对象的属性）是否存在（并且不为null）。如果var存在则返回TRUE;否则返回FALSE。
   empty（）函数检查变量是否为空值空字符串，0，NULL或False。如果var具有非空和非零值，则返回FALSE。
  ```
+ #### 1.6读取文件内容的PHP函数
+ ```text
+ (1)fopen():
+    fopen()作用是打开一个文件, 返回的是文件指针, 它不能直接输出文件内容, 要配合fget()一类的函数来从文件指针中读取文件内容
+    文件使用完之后需要通过fclose()函数来关闭该指针指向的文件
+ (2)file_get_contents():
+    file_get_contents()是将整个文件的内容读取到一个字符串中
+ (3)file():
+    file()函数和file_get_contents()函数类似, 不同的是file()函数读取文件内容并返回一个数组,该数组每个单元都是文件中相应的一行, 包括换行符在内。
+ ```
+ #### 1.7 合并数组的方式
+ - array_merge
+ ```text
+ 如果是相同的数字索引, array_merge()会重建索引,新的索引从0开始
+ 如果是相同的字符串索引, array_merge()会用后面数组的值覆盖掉前面的值
+ ```
+ ```php
+ $arr1 = [1 => 2, 4, 'color' => 'red'];
+ $arr2 = ['a', 'b', 'color' => ['green'], 'shape' => 'circle', 4];
+ 
+ $res1 = array_merge($arr1, $arr2);
+ print_r($res1);
+ ```
+  结果：
+ ```text
+ Array
+ (
+     [0] => 2
+     [1] => 4
+     [color] => Array
+         (
+             [0] => green
+         )
+     [2] => a
+     [3] => b
+     [shape] => circle
+     [4] => 4
+ )
+ ```
+ - \+
+ >对于相同的数字索引和字符串索引, +会前面数组的值覆盖掉后面数组的值, 合并后的数组索引保持不变
+ ```php
+ $arr1 = [1 => 2, 4, 'color' => 'red'];
+ $arr2 = ['a', 'b', 'color' => ['green'], 'shape' => 'circle', 4];
+ 
+ $res1 = $arr1 + $arr2;
+ print_r($res1);
+ ```
+ 结果：
+ ```text
+ Array
+ (
+     [1] => 2
+     [2] => 4
+     [color] => red
+     [0] => a
+     [shape] => circle
+ )
+ ```
+ - array_merge_recursive
+ >如果是相同的数字索引, 处理方式和array_merge相同, 都是重建索引, 新的索引从0开始
+  如果是相同的字符串索引, 会把相同的索引放到一个数组里面
+  
+ ```php
+ <?php
+ $arr1 = [1 => 2, 4, 'color' => 'red'];
+ $arr2 = ['a', 'b', 'color' => ['green'], 'shape' => 'circle', 4];
+ 
+ $res1 = $res1 = array_merge_recursive($arr1, $arr2);
+ print_r($res1);
+ ```
+ 结果：
+ ```text
+ Array
+ (
+     [0] => 2
+     [1] => 4
+     [color] => Array
+         (
+             [0] => red
+             [1] => green
+         )
+     [2] => a
+     [3] => b
+     [shape] => circle
+     [4] => 4
+ )
+ ```
+ 
+ 
  ## 2 变量和常量
  
  #### 2.1 常量
