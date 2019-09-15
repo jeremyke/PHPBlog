@@ -293,7 +293,7 @@
  //设置一个偏移位置的值
     public function offsetSet($offset, $value){
          if(is_null($offset)){
-            $this->container[] = $value;
+             $this->container[] = $value;
          } else {
              $this->container[$offset] = $value;
          }
@@ -360,9 +360,9 @@
  <?php
  class CallableClass
  {
-     function __invoke($x) {
-         var_dump($x);
-     }
+     function __invoke($x) {
+         var_dump($x);
+     }
  }
  $obj = new CallableClass;
  
