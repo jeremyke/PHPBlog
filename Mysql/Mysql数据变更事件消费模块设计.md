@@ -24,8 +24,9 @@ MYSQL事件从左边流向右边的DbEventWorker。
 
 待开发的模块有两个：
 
-DTS                     - 负责监听mysql binlog, 将事件投递到KAFKA队列,(DTS默认开发了一个中间件，可以考虑使用阿里云的DTS替换，替换后处理下DbEventListener处理的消息格式即可)。
-DbEventWorker   - 负责最终从KAFKA队列，消费事件。
+DTS- 负责监听mysql binlog, 将事件投递到KAFKA队列,(DTS默认开发了一个中间件，可以考虑使用阿里云的DTS替换，替换后处理下DbEventListener处理的消息格式即可)。
+DbEventWorker- 负责最终从KAFKA队列，消费事件。
+
  #### 3.2. DBEventWorker逻辑设计
 ![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/DbEventWorker组件设计.png)
 
@@ -76,7 +77,8 @@ return [
 编写监听器实现代码：
 
 下面是handler配置的service方法
-
+```php
+<?php
 public function test($evs)
 {
    foreach ($evs as $ev) {
@@ -90,6 +92,8 @@ public function test($evs)
 
 	return true;
 }
+```
+
 
 
  ## 5. 全量同步
