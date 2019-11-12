@@ -12,26 +12,26 @@
   
  #### 1.3 语句include和require的区别是什么?
   ```text
-    在失败的时候：include 产生一个 warning ，而 require 直接产生错误中断；
-    require 在运行前载入；include 在运行时载入；
-    require_once 和 include_once 可以避免重复包含同一文件
+    （1）在失败的时候：include 产生一个警告错误，程序继续往下执行；require 产生致命错误，中断程序执行。
+    （2）require 在运行前载入；include 在运行时载入。
+    （3）require_once 和 include_once 可以避免重复包含同一文件。
   ```
  #### 1.4作用域
   ```php
   （1）全局作用域和局部作用域：
-    在所有函数外部定义的变量，拥有全局作用域。除了函数外，全局变量可以被脚本中的任何部分访问，要在一个函数中访问一个全局变量，需要使用 global 关键字。
+    在所有函数外部定义的变量，拥有全局作用域。除了函数外，全局变量可以被代码中的任何部分访问。
     全局作用域可以调用全局变量，但是不可以调用局部变量（因为函数执行完毕后，其内部的局部变量或函数要被计算机的内存所回收）。
-    局部作用域可以调用局部变量但不可以调用全局变量。可以通过过$GLOBALS或global方式来访问全局变量。
-    总结：$GLOBALS['i']与global $i的区别
-        ① $GLOBALS['i']与全局变量$i是同一元素，删除其中任何一个都会对另外一个产生影响！
-        ② global $i相当于应用全局变量$i在内存中的地址，删除global $i只是相当于移除了关联关系，但是其对原变量没有任何影响！
-  （2）Static 作用域
+    局部作用域可以调用局部变量，不可以直接调用全局变量，但可以通过$GLOBALS或global方式来访问全局变量。
+  （2）$GLOBALS['i']与global $i的区别：
+    ① $GLOBALS['i']与全局变量$i是同一元素，删除其中任何一个都会对另外一个产生影响！（引入传递）
+    ② global $i相当于应用全局变量$i在内存中的地址，删除global $i只是相当于移除了关联关系，但是其对原变量没有任何影响！（值传递）
+  （3）Static 作用域
      当一个函数完成时，它的所有变量通常都会被删除。然而，有时候您希望某个局部变量不要被删除。要做到这一点，在函数内部声明变量时使用 static 关键字即可。
   ``` 
  #### 1.5 isset（）和！empty（）
  ```text
   isset（）检查变量（或数组的元素或对象的属性）是否存在（并且不为null）。如果var存在则返回TRUE;否则返回FALSE。
-  empty（）函数检查变量是否为空值空字符串，0，NULL或False。如果var具有非空和非零值，则返回FALSE。
+  empty（）函数检查变量是否为空值空字符串，0，null或False。如果变量具有非空和非零值，则返回FALSE。
  ```
  #### 1.6读取文件内容的PHP函数
  ```text
@@ -73,7 +73,7 @@
  )
  ```
  - \+
- >对于相同的数字索引和字符串索引, +会前面数组的值覆盖掉后面数组的值, 合并后的数组索引保持不变
+ >对于相同的数字索引和字符串索引, “+”前面数组的值覆盖掉后面数组的值, 合并后的数组索引保持不变
  ```php
  $arr1 = [1 => 2, 4, 'color' => 'red'];
  $arr2 = ['a', 'b', 'color' => ['green'], 'shape' => 'circle', 4];
@@ -139,8 +139,8 @@
   ```php
   <?php
   strlen($str);//返回字符串长度 mb_strlen($str) 可以返回中文字符长度；
-  str_replace('a','b',$str);//用b替换$str 中的a 区分大小写  ;
-  str_ireplace('a','b',$str);//替换 不区分大小写
+  str_replace('a','b',$str);//用b替换$str 中的a ，区分大小写;
+  str_ireplace('a','b',$str);//替换 不区分大小写；
   htmlspecialchars($str,ENT_NOQUOTES);//字符串转换为html实体。 ENT_COMPT(默认只编译双引号)ENT_QUOTES单引号双引号都编译,ENT_NOQUOTES不编译任何引号
   strpos($str,'a');//字符串a 在$str 第一次出现的位置 索引0开始 没有出现返回false 区分大小写;stripos($str,'a')不区分大小写
   strrpos($str,'a');//字符串a 在$str 最后一次出现的位置 索引0开始 没有出现返回false 区分大小写; strripos($str,'a’)不区分大小写
@@ -170,12 +170,12 @@
  prev($arr);  //将数组中的内部指针倒回一位
  next($arr);  //将数组中的内部指针向前移动一位
  end($arr);  //将数组中的内部指针指向最后一个单元
- reset($arr;  //将数组中的内部指针指向第一个单元
+ reset($arr);  //将数组中的内部指针指向第一个单元
  each($arr);  //将返回数组当前元素的一个键名/值的构造数组，并使数组指针向前移动一位
  list($key,$value)=each($arr);  //获得数组当前元素的键名和值
  //(3)数组的分段和填充
  array_slice($arr,0,3);  //可以将数组中的一段取出，此函数忽略键名
- array_splice($arr,0,3，array("black","maroon"));  //可以将数组中的一段取出，与上个函数不同在于返回的序列从原数组中删除
+ array_splice($arr,0,3,array("black","maroon"));  //可以将数组中的一段取出，与上个函数不同在于返回的序列从原数组中删除
  array_chunk($arr,3,TRUE);  //可以将一个数组分割成多个，TRUE为保留原数组的键名
  //(4)栈，队列
  array_push($arr,"apple","pear");  //将一个或多个元素压入数组栈的末尾（入栈），返回入栈元素的个数
@@ -270,7 +270,7 @@
      if($end==null) $end = count($data)-1;
      $index = floor(($start + $end)/2);
      if($data[$index]==$value) return $index;
-     if(data[$index]<$value) return erfen($data,$value,$index+1);
-     if(data[$index]>$value) return erfen($data,$value,$0,$index-1);
+     if($data[$index]<$value) return erfen($data,$value,$index+1);
+     if($data[$index]>$value) return erfen($data,$value,$index-1);
  }
  ```
