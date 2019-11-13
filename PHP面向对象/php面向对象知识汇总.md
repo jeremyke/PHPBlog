@@ -33,7 +33,7 @@
     B、父类名::方法名();
     C、Parent::方法名();
  (2)在子类中编写构造方法，如果父类中也有构造方法，，一定要去调用一次父类中被覆盖的那个构造方法
- (3)类中重载的方法，不能低于父类中的访问权限
+ (3)类中重写的方法，不能低于父类中的访问权限
  ```
  - 重载
  ```text
@@ -102,8 +102,9 @@
  class autoloader {
    public static $loader;
    public static function init() {
-     if (self::$loader == NULL)
-       self::$loader = new self ();
+     if (self::$loader == NULL){
+         self::$loader = new self ();
+     }
      return self::$loader;
    }
    public function __construct() {
@@ -159,7 +160,7 @@
  
  ## 5. MVC的理解？
  ```text
- 用一种业务逻辑、数据、界面显示分离的方法组织代码，将业务逻辑聚集到一个部件里面，在改进和个性化定制界面及用户交互的同时，不需要重新编写业务逻辑。
+ 用一种把业务逻辑、中心数据、界面显示分离的方法组织代码。将业务逻辑聚集到一个部件里面，在改进和个性化定制界面及用户交互的同时，不需要重新编写业务逻辑。
  它把软件系统分为三个基本部分：
  　　　　模型（Model）：负责存储系统的中心数据。
  　　　　视图（View）：将信息显示给用户（可以定义多个视图）。
@@ -221,7 +222,9 @@
  }
  ```
  如果我们想遍历出对象的所有属性，就需要控制foreach的行为，就需要给类对象，提供更多的功能，需要继承自Iterator的接口。
- 为什么一个类只要实现了Iterator迭代器，其对象就可以被用作foreach的对象呢？
+ 
+ - 为什么一个类只要实现了Iterator迭代器，其对象就可以被用作foreach的对象呢？
+ 
  在对PHP实例对象使用foreach语法时，会检查这个实例有没有实现Iterator接口，如果实现了，就会通过内置方法或使用实现类中的方法模拟foreach语句。
  
  ![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/3b3de50e098eb76faea856150ba0df0c_720430-20190411154253007-1474559548.png)
@@ -255,7 +258,6 @@
      {
          return next($this->info);
      }
- 
  }
  
  $team = new Team();
@@ -280,16 +282,15 @@
  ```php
  <?php
  class obj implements arrayaccess{
-     private $container = array();
+     private $container = [];
      public function __construct(){
          $this->container = array(
              "one"   => 1,
              "two"   => 2,
-             "three" => 3,
-         );
+             "three" => 3,);
      }
  
- //设置一个偏移位置的值
+    //设置一个偏移位置的值
     public function offsetSet($offset, $value){
          if(is_null($offset)){
              $this->container[] = $value;
@@ -298,24 +299,24 @@
          }
      }
  
- //检查一个偏移位置是否存在
+    //检查一个偏移位置是否存在
      public function offsetExists($offset) {
          return isset($this->container[$offset]);
      }
  
- //复位一个偏移位置的值
+    //复位一个偏移位置的值
      public function offsetUnset($offset) {
          unset($this->container[$offset]);
      }
  
- //获取一个偏移位置的值
+    //获取一个偏移位置的值
      public function offsetGet($offset){
          return isset($this->container[$offset]) ? $this->container[$offset]: null;
      }
  }
  //对该类测试使用：
  
- $obj = new obj;
+ $obj = new obj();
  var_dump(isset($obj["two"]));
  var_dump($obj["two"]);
  unset($obj["two"]);
