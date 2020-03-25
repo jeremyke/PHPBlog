@@ -17,7 +17,7 @@ class Singleton
     private function __clone(){}
     public static function getInstance()
     {
-        if(self::$_instance instanceof Singleton){//instanceof 判断一个实例是否是某个类的对象
+        if(!self::$_instance instanceof Singleton){//instanceof 判断一个实例是否是某个类的对象
             self::$_instance = new Singleton();
         }
         return self::$_instance;
