@@ -192,7 +192,7 @@ class Cat extends Toy
     }
 }
 
-
+//实现方式一（红）
 //目标角色（红）
 interface RedTarget
 {
@@ -200,13 +200,6 @@ interface RedTarget
 
     public function doMouthClose();
 }
-
-//目标角色（绿）
-interface GreenTarget
-{
-    public function operateMouth($type = 0);
-}
-
 
 //类适配器角色（红）
 class RedAdapter implements RedTarget
@@ -228,6 +221,12 @@ class RedAdapter implements RedTarget
     {
         $this->adaptee->closeMouth();
     }
+}
+//实现方式二（绿）
+//目标角色（绿）
+interface GreenTarget
+{
+    public function operateMouth($type = 0);
 }
 
 //类适配器角色（绿）
