@@ -138,8 +138,13 @@ class Bike extends Strategy
 class Context
 {
     protected $_stratege;//存储传过来的策略对象
-    public function goSchoole()
+    public function goSchoole($obj)
     {
+        if(!empty($obj)){
+            $this->_stratege = $obj;
+        }else{
+            return false;
+        }
         $this->_stratege->goSchoole();
     }
 }
