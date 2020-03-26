@@ -47,7 +47,52 @@
  ```
  
  ##### 2.3 多态性
- >相同的操作或函数作用于同一个类的不同的对象，产生不同的结果，这种现象称为多态性。多态性增强了软件的灵活性和重用性。
+ >相同的操作作用于同一个类的不同的对象，产生不同的结果，也即不同类的对象收到相同的消息时，将得到不同的结果。这种现象称为多态性。
+ 多态性增强了软件的灵活性和重用性。
+ 
+ 代码示例：
+ 
+ ```php
+ <?php
+ class employee{//定义员工父类
+     protected function working(){//定义员工工作，需要在子类的实现
+         echo "本方法需要在子类中重载!";
+     }
+
+ }
+
+ class painter extends employee{//定义油漆工类
+    public function working(){//实现继承的工作方法
+        echo "油漆工正在刷漆！\n";
+    }
+ }
+
+ class typist extends employee{//定义打字员类
+     public function working(){
+         echo "打字员正在打字！\n";
+     }
+ }
+
+ class manager extends employee{//定义经理类
+     public function working(){
+         echo "经理正在开会！";
+     }
+ }
+
+ function printworking($obj){//定义处理方法
+    if($obj instanceof employee){//若是员工对象，则显示其工作状态
+         $obj->working();
+    }else{//否则显示错误信息
+         echo "Error: 对象错误！";
+    }
+ }
+
+printworking(new painter());//显示油漆工的工作
+printworking(new typist());//显示打字员的工作
+printworking(new manager());//显示经理的工作
+ ```
+ 
+ 分析：在上述程序中，首先定义一个员工基类，并定义一个员工工作状态的方法。然后定义将继承自员工基类的三个员工类：油漆工类、打字员类和经理类。然后定义显示员工工作状态的方法。并在该方法中创建一个“是一”关系，用于判断是否为合法的员工。其结果如下所示。
  
  ## 3.PHP自动加载？
  
