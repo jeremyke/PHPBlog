@@ -287,10 +287,7 @@ interface Subject{
     public function register(Observer $observer);
     public function notify();
 }
-// 观察者接口
-interface Observer{
-    public function watch();
-}
+
 // 主题
 class Action implements Subject{
     public $_observers=[];
@@ -304,6 +301,11 @@ class Action implements Subject{
         }
 
     }
+}
+
+// 观察者接口
+interface Observer{
+    public function watch();
 }
 
 // 观察者
