@@ -101,7 +101,7 @@ cpu资源，不适合大流量环境的部署。
 ```
 按需模式如图说明：
 
-![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/1012804-968e65ef3010cebd.webp)
+![image](https://github.com/jeremyke/PHPBlog/raw/master/Pictures/1012804-968e65ef3010cebd.jpg)
 
 每个php-fpm进程占用30M内存，所有一般2G内存设置只内存为50个比较合适。
 
