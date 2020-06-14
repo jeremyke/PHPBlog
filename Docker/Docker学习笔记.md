@@ -1,7 +1,7 @@
  ## 1. Docker实践
  container 是建立在image层之上“只读”
  
- ![image](./../..//Pictures/1739022581121130.png)
+ ![image](./../Pictures/1739022581121130.png)
 
  **Docker镜像和容器常用命令：** 
  - docker image ls
@@ -26,7 +26,7 @@
   ```
   dockerfile有2种写法如下图：
   ```
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18280510243315.png)
+   ![image](./../Pictures/18280510243315.png)
   
    - FROM 
    >基于的镜像名称，例如：FROM nginx:v16.9，初始的镜像（base image就FROM scratch）
@@ -103,11 +103,11 @@
   
    - 网络的2种模型
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17480126494239.png)
+   ![image](./../Pictures/17480126494239.png)
    
    - NAT
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16780630345924.png)
+   ![image](./../Pictures/16780630345924.png)
    
    
   #### 2.2 Linux网络命名空间
