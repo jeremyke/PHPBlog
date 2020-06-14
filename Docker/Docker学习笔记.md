@@ -114,9 +114,9 @@
   
   示意图
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/173606258412577.png)
+  ![image](./../Pictures/173606258412577.png)
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18141217427864.png)
+  ![image](./../Pictures/18141217427864.png)
   
   > 每个容器的network namespace都是相互隔离开的，和宿主主机也是隔离开的。
   
@@ -140,9 +140,9 @@
   
   **一张图弄清楚2个container如何通信和单个container如何访问外网**
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17731208708661.png)
+  ![image](./../Pictures/17731208708661.png)
     
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/1700101689119104.png)
+  ![image](./../Pictures/1700101689119104.png)
   
   #### 2.3 Docker间的通信
   
@@ -171,7 +171,7 @@
   
   **网路图**
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190520172031.png)
+  ![image](./../Pictures/20190520172031.png)
   
   **命令**
   
@@ -181,7 +181,7 @@
  
  docker网络有3种：
  
- ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/167510217510269.png)
+ ![image](./../Pictures/167510217510269.png)
  
  >创建容器的时候指定连接的network:<br/>
  docker run -d -name test1 --network none[host] busybox /bin/sh -c "while true;do sleep 3600;done"<br/>
@@ -191,18 +191,18 @@
   #### 2.5 多机通信overlay && underlay
   >看图：
   
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/180908117510798.png)
+   ![image](./../Pictures/180908117510798.png)
    
    
  ## 3. Docker持久化存储和数据共享
  
  docker volume图解：
  
- ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17290503160940.png)
+ ![image](./../Pictures/17290503160940.png)
  
  Docker持久化方案：
  
- ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16751028362736.png)
+ ![image](./../Pictures/16751028362736.png)
  
  >volume类型：<br/>
  (1)受管理的data volume,由docker后台自动创建<br/>
@@ -274,7 +274,7 @@
   
   如图案例：
   
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/docker-composer.png)
+   ![image](./../Pictures/docker-composer.png)
    
   **docker-compose安装**
   ```
@@ -326,11 +326,11 @@
   ## 5. Docker swarm
    - 如下是swarm的基础架构
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16720405075654.png)
+   ![image](./../Pictures/16720405075654.png)
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/168004099093133.png)
+   ![image](./../Pictures/168004099093133.png)
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/181412228610880.png)
+   ![image](./../Pictures/181412228610880.png)
    
   #### 5.1 创建swarm cluster
   ```
@@ -380,11 +380,11 @@
    
    **图示**
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18140130434394.png)
+   ![image](./../Pictures/18140130434394.png)
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/16570130120141141.png)
+   ![image](./../Pictures/16570130120141141.png)
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18750813423462.png)
+   ![image](./../Pictures/18750813423462.png)
    
    **实验步骤**
    
@@ -438,9 +438,9 @@
    **图示**
    >secret 存放于Raft database里面
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606150952.png)
+   ![image](./../Pictures/20190606150952.png)
    
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606151211.png)
+   ![image](./../Pictures/20190606151211.png)
    
    **实验步骤**
    
@@ -476,20 +476,20 @@
   
   开发流程图示：
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190606173440.png)    
+  ![image](./../Pictures/20190606173440.png)    
   
   
   ## 7 kubenetes
   
   #### 7.1 的架构图
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/178912286910262.png)
+  ![image](./../Pictures/178912286910262.png)
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17290505408554.png)
+  ![image](./../Pictures/17290505408554.png)
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17610617104055.png)
+  ![image](./../Pictures/17610617104055.png)
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17860601183669.png)
+  ![image](./../Pictures/17860601183669.png)
   
   **简单说明**
   
@@ -566,7 +566,7 @@
   
    - 图示：
   
-   ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153143.png)
+   ![image](./../Pictures/20190617153143.png)
   
    - 特点：
    >cluster内任何container之间可以通过ip相互ping通，任何pods之间也可以相互ping通。
@@ -576,15 +576,15 @@
   
   - 什么是service？
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153632.png)
+  ![image](./../Pictures/20190617153632.png)
   
   - 不要直接管理pods?
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153759.png)
+  ![image](./../Pictures/20190617153759.png)
   
   - service的创建和类型
   >可以通过kubectl expose创建，也可以通过yml文件创建。
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/20190617153925.png)
+  ![image](./../Pictures/20190617153925.png)
   
   - kubectl expose创建 clusterIP的service
   >kubectl expose [resource] [resource name] (比如：kubectl expose pods nginx-pods或者：kubectl expose deployment service-test)
@@ -693,7 +693,7 @@
   ```
   具体如图：
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17370517687694.png)
+  ![image](./../Pictures/17370517687694.png)
   
   - 把gitlab web上添加.gitlab-ci.yml。就可以实现持续集成了！
   
@@ -875,8 +875,8 @@ docker-deploy:
    
   - 在gitlab web上new一个tab就能触发pipeline,使其push到registry服务器
   
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/17860604109141129.png)
-  ![image](https://github.com/jeremyke/PHPBlog/blob/master/Pictures/18500819276866.png)
+  ![image](./../Pictures/17860604109141129.png)
+  ![image](./../Pictures/18500819276866.png)
   
   - 最后在docker host上使用k8s或者docker swarm 或者docker原生的方法去update image就可以实现无宕机的更新线上代码。
   
